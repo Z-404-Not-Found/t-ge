@@ -26,6 +26,7 @@ export default () => {
         skipTaskbar: true,
         alwaysOnTop: true,
         transparent: true,
+        parent: mainWindow,
         webPreferences: {
           nodeIntegration: true,
           preload: join(__dirname, '../preload/index.js')
