@@ -8,7 +8,7 @@
     <v-btn icon="mdi-window-close" variant="text" @click="closeWindow"></v-btn>
     <RouterView />
     <!-- 错误处理 -->
-    <v-snackbar v-model="isOnError">
+    <v-snackbar v-model="isOnError" max-height="100">
       <div class="flex items-center">
         <div class="mr-4">
           <v-icon color="red"> mdi-alert </v-icon>
@@ -55,7 +55,6 @@ onMounted(() => {
   window.api.windowHandlers.isMainWindowMaximized().then((isMaximized) => {
     maximizedIcon.value = isMaximized ? 'mdi-window-restore' : 'mdi-window-maximize'
   })
-
   window.api.onError((_event, data) => {
     isOnError.value = true
     errorMessage.value = data

@@ -8,7 +8,7 @@
         <v-btn color="blue" variant="text" @click="isNoAvailableUpdate = false"> 知道了 </v-btn>
       </template>
     </v-snackbar>
-    <v-snackbar v-model="isCheckingForUpdate">
+    <v-snackbar v-model="isCheckingForUpdate" timeout="-1">
       <div>正在检查更新</div>
       <v-progress-linear indeterminate></v-progress-linear>
     </v-snackbar>

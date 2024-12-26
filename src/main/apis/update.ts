@@ -2,6 +2,7 @@ import { autoUpdater } from 'electron-updater'
 import { ipcMain, BrowserWindow, screen } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { join } from 'path'
+import logger from '../utils/logger'
 
 const updateURL = is.dev
   ? `${process.env['ELECTRON_RENDERER_URL']}#/update`
@@ -61,6 +62,7 @@ export default () => {
   })
   // 更新错误事件
   autoUpdater.on('error', (err) => {
+    logger.error('更新错误：' + err)
     mainWindow?.webContents.send('on-error', '更新错误：' + err)
     updateWindow?.webContents.send('on-error', '更新错误：' + err)
   })
