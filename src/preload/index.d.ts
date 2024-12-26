@@ -15,6 +15,16 @@ type onUpdateChannelListener<T extends onUpdateChannelKeys> = (
   data: onUpdateChannel[T]
 ) => void
 
+type openaiChatMessage = {
+  role: 'user' | 'assistant' | 'system'
+  content:
+    | string
+    | {
+        type: 'text' | 'image'
+        content: string
+      }
+}
+
 declare global {
   interface Window {
     electron: ElectronAPI
@@ -50,7 +60,7 @@ declare global {
         close: () => void
       }
       /**
-       * 更新相关操作
+       * 更新相关接口
        */
       update: {
         /**
@@ -77,6 +87,40 @@ declare global {
           channel: T,
           listener: onUpdateChannelListener<T>
         ) => void
+      }
+      /**
+       * OpenAI相关接口
+       */
+      openai: {
+        /**
+         * 聊天接口
+         */
+        chat: {
+          /**
+           * 发送消息
+           * @param messages 消息列表
+           * @returns void
+           */
+          send: (messages: openaiChatMessage[]) => void
+          /**
+           * 接收消息
+           * @param listener 接收消息，回调参数类型为string，是流式输出的消息
+           * @returns void
+           */
+          onStream: (listener: (event: IpcRendererEvent, data: string) => void) => void
+          /**
+           * 接收消息结束
+           * @param listener 接收消息结束
+           * @returns void
+           */
+          onStreamEnd: (listener: () => void) => void
+          /**
+           * 接收消息错误
+           * @param listener 接收消息错误，回调参数类型为string
+           * @returns void
+           */
+          onStreamError: (listener: (event: IpcRendererEvent, data: string) => void) => void
+        }
       }
     }
   }
