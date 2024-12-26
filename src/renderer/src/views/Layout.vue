@@ -1,12 +1,16 @@
 <template>
-  <div>
-    <div class="text-gray-500">Layout</div>
-    <v-btn icon="mdi-chat" variant="text" @click="router.push('/chat')"></v-btn>
-    <v-btn icon="mdi-cog" variant="text" @click="router.push('/setting')"></v-btn>
-    <v-btn icon="mdi-window-minimize" variant="text" @click="minimizeWindow"></v-btn>
-    <v-btn :icon="maximizedIcon" variant="text" @click="toggleMaximized"></v-btn>
-    <v-btn icon="mdi-window-close" variant="text" @click="closeWindow"></v-btn>
-    <RouterView />
+  <div class="h-full flex flex-col overflow-hidden">
+    <div>
+      <div class="text-gray-500">Layout</div>
+      <v-btn icon="mdi-chat" variant="text" @click="router.push('/chat')"></v-btn>
+      <v-btn icon="mdi-cog" variant="text" @click="router.push('/setting')"></v-btn>
+      <v-btn icon="mdi-window-minimize" variant="text" @click="minimizeWindow"></v-btn>
+      <v-btn :icon="maximizedIcon" variant="text" @click="toggleMaximized"></v-btn>
+      <v-btn icon="mdi-window-close" variant="text" @click="closeWindow"></v-btn>
+    </div>
+    <div class="flex-1 overflow-hidden">
+      <RouterView />
+    </div>
     <!-- 错误处理 -->
     <v-snackbar v-model="isOnError" max-height="100">
       <div class="flex items-center">

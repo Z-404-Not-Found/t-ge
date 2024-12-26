@@ -25,32 +25,12 @@ const api = {
       onStreamError: (listener: (event, data) => void) =>
         ipcRenderer.on('on-chat-stream-error', listener)
     }
+  },
+  sqlite: {
+    insertTest: async (data) => await ipcRenderer.invoke('insert-test', data),
+    selectTest: async () => await ipcRenderer.invoke('select-test')
   }
 }
-// export default () => {
-//   ipcMain.on('on-chat-send', async (event, messages) => {
-//     await openai.chat.completions
-//       .create({
-//         messages: messages,
-//         model: import.meta.env.MAIN_VITE_OPENAI_API_MODEL,
-//         stream: true
-//       })
-//       .then(async (completion) => {
-//         for await (const part of completion) {
-//           if (part.choices[0].delta.content) {
-//             event.sender.send('on-chat-stream', part.choices[0].delta.content)
-//           }
-//           if (part.choices[0].finish_reason === 'stop') {
-//             event.sender.send('on-chat-stream-end')
-//           }
-//         }
-//       })
-//       .catch((error) => {
-//         logger.error(error)
-//         event.sender.send('on-chat-stream-error', error)
-//       })
-//   })
-// }
 
 // 仅当启用上下文隔离时，使用 `contextBridge` API 将 Electron API 暴露给渲染器，
 // 否则直接添加到 DOM 全局对象。

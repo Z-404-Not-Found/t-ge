@@ -122,6 +122,10 @@ declare global {
           onStreamError: (listener: (event: IpcRendererEvent, data: string) => void) => void
         }
       }
+      sqlite: {
+        insertTest: (data: string) => Promise<void>
+        selectTest: () => Promise<string[]>
+      }
     }
   }
 }
