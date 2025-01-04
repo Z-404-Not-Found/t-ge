@@ -33,7 +33,14 @@ declare global {
        * 获取错误信息
        * @returns 错误信息
        */
-      onError: (listener: (event: IpcRendererEvent, error: string) => void) => void
+      onMessage: (
+        listener: (event: IpcRendererEvent, type: string, message: string) => void
+      ) => void
+      /**
+       * 打开日志文件
+       * @returns void
+       */
+      openLogFile: () => void
       /**
        * 窗口相关操作
        */
@@ -125,6 +132,12 @@ declare global {
       sqlite: {
         insertTest: (data: string) => Promise<void>
         selectTest: () => Promise<string[]>
+      }
+      userData: {
+        setItem: (key: string, value: string) => Promise<string>
+        getItem: (key: string) => Promise<object | null>
+        removeItem: (key: string) => Promise<string>
+        clear: () => Promise<string>
       }
     }
   }

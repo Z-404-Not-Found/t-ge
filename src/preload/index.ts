@@ -3,7 +3,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // 渲染器的自定义 API
 const api = {
-  onError: (listener: (event, data) => void) => ipcRenderer.on('on-error', listener),
+  onMessage: (listener: (event, ...data) => void) => ipcRenderer.on('on-message', listener),
+  openLogFile: () => ipcRenderer.send('open-log-file'),
   windowHandlers: {
     isMainWindowMaximized: async () => await ipcRenderer.invoke('is-mainWindow-maximized'),
     toggleMaximized: async () => await ipcRenderer.invoke('toggle-window-maximize'),
@@ -29,6 +30,12 @@ const api = {
   sqlite: {
     insertTest: async (data) => await ipcRenderer.invoke('insert-test', data),
     selectTest: async () => await ipcRenderer.invoke('select-test')
+  },
+  userData: {
+    setItem: async (key, value) => await ipcRenderer.invoke('user-data-setItem', key, value),
+    getItem: async (key) => await ipcRenderer.invoke('user-data-getItem', key),
+    removeItem: async (key) => await ipcRenderer.invoke('user-data-removeItem', key),
+    clear: async () => await ipcRenderer.invoke('user-data-clear')
   }
 }
 

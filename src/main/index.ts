@@ -43,7 +43,7 @@ function createWindow(): void {
 // 某些 API 只能在此事件发生后使用。
 app.whenReady().then(() => {
   // 为 Windows 设置应用程序用户模型 ID
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('com.tge.sure')
 
   // 在开发环境中默认通过 F12 打开或关闭 DevTools，
   // 并在生产环境中忽略 CommandOrControl + R。

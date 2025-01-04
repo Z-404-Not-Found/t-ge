@@ -48,6 +48,7 @@ export default () => {
   })
   // 更新可用
   autoUpdater.on('update-available', async (info) => {
+    mainWindow?.webContents.send('update-available', info)
     createUpdateWindow()
     setTimeout(() => {
       updateWindow?.webContents.send('update-available', info)
@@ -64,8 +65,7 @@ export default () => {
   // 更新错误事件
   autoUpdater.on('error', (err) => {
     logger.error('更新错误：' + err)
-    mainWindow?.webContents.send('on-error', '更新错误：' + err)
-    updateWindow?.webContents.send('on-error', '更新错误：' + err)
+    updateWindow?.webContents.send('on-message', 'error', '更新错误：' + err)
   })
   // 更新下载完成事件
   autoUpdater.on('update-downloaded', () => {

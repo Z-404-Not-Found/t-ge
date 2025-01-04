@@ -5,7 +5,7 @@
       class="h-full"
       type="avatar,article,text,text,text,actions"
     ></v-skeleton-loader>
-    <v-card v-else-if="!isErrored" class="h-full w-full">
+    <v-card v-else-if="!isOnError" class="h-full w-full">
       <template #prepend>
         <v-icon size="32">mdi-update</v-icon>
       </template>
@@ -81,7 +81,7 @@ import { onMounted, ref } from 'vue'
 import moment from 'moment'
 import MarkdownIt from 'markdown-it'
 
-const isErrored = ref(false)
+const isOnError = ref(false)
 const error = ref()
 const isLoading = ref(true)
 const isDownloading = ref(false)
@@ -103,7 +103,7 @@ const closeWindow = () => {
 
 const downloadUpdate = () => {
   isDownloading.value = true
-  isErrored.value = false
+  isOnError.value = false
   window.api.update.downloadUpdate()
 }
 
@@ -129,9 +129,11 @@ const onUpdateInit = () => {
   window.api.update.onUpdate('update-downloaded', () => {
     isDownloaded.value = true
   })
-  window.api.onError((_event, data) => {
-    isErrored.value = true
-    error.value = data
+  window.api.onMessage((_event, type, message) => {
+    if (type === 'error') {
+      isOnError.value = true
+      error.value = message
+    }
   })
 }
 

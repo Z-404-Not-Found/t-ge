@@ -29,7 +29,7 @@ const userCheckUpdate = () => {
   window.api.update.onUpdate('update-available', () => {
     isCheckingForUpdate.value = false
   })
-  window.api.onError(() => {
+  window.api.onMessage(() => {
     isCheckingForUpdate.value = false
   })
   window.api.update.checkForUpdates()
