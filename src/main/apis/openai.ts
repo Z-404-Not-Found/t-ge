@@ -3,8 +3,8 @@ import { OpenAI } from 'openai'
 import logger from '../utils/logger'
 
 const openai = new OpenAI({
-  apiKey: import.meta.env.MAIN_VITE_OPENAI_API_KEY,
-  baseURL: import.meta.env.MAIN_VITE_OPENAI_API_BASE_URL
+  apiKey: 'sk-nWogUKhdjpmMjmujbusnHqXQyBbZns5BZ6Cg6IQV9UCTAvyV',
+  baseURL: 'https://api.chatanywhere.tech/v1'
 })
 
 export default () => {
@@ -12,7 +12,7 @@ export default () => {
     await openai.chat.completions
       .create({
         messages: messages,
-        model: import.meta.env.MAIN_VITE_OPENAI_API_MODEL,
+        model: 'gpt-4o-mini',
         stream: true
       })
       .then(async (completion) => {
