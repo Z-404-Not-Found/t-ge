@@ -89,6 +89,7 @@ declare global {
          * 监听更新事件
          * @param channel 事件名，可选值：'check-for-updates' | 'download-progress' | 'update-available' | 'update-not-available' | 'update-error' | 'update-downloaded'
          * @param listener 事件监听器，其中：channel为'update-available'时，回调参数类型为UpdateInfo，'download-progress'为ProgressInfo，'check-for-updates'和 'update-downloaded'为void，其他为string
+         * @returns void
          */
         onUpdate: <T extends onUpdateChannelKeys>(
           channel: T,
@@ -96,9 +97,30 @@ declare global {
         ) => void
       }
       /**
-       * OpenAI相关接口
+       * AI供应商相关接口
        */
-      openai: {
+      aiProvider: {
+        /**
+         * 获取AI供应商列表
+         * @returns AI供应商列表
+         */
+        getProviders: () => Promise<AiProvider[]>
+        /**
+         * 获取当前AI供应商
+         * @returns 当前AI供应商
+         */
+        getCurrentProvider: () => Promise<AiProvider>
+        /**
+         * 添加AI供应商
+         * @param provider AI供应商
+         * @returns Update Success
+         */
+        updateProvider: (provider: AiProvider) => Promise<string>
+      }
+      /**
+       * AI相关接口
+       */
+      ai: {
         /**
          * 聊天接口
          */
@@ -134,10 +156,30 @@ declare global {
         selectTest: () => Promise<string[]>
       }
       userData: {
-        setItem: (key: string, value: string) => Promise<string>
+        /**
+         * 设置用户数据
+         * @param key 键
+         * @param value 值
+         * @returns void
+         */
+        setItem: (key: string, value: string) => void
+        /**
+         * 获取用户数据
+         * @param key 键
+         * @returns 值
+         */
         getItem: (key: string) => Promise<object | null>
-        removeItem: (key: string) => Promise<string>
-        clear: () => Promise<string>
+        /**
+         * 删除用户数据
+         * @param key 键
+         * @returns void
+         */
+        removeItem: (key: string) => void
+        /**
+         * 清空用户数据
+         * @returns void
+         */
+        clear: () => void
       }
     }
   }

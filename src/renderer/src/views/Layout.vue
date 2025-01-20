@@ -105,6 +105,9 @@ watch(isOnMessage, (value) => {
     isOnInfo.value = false
     isOnWarn.value = false
     isOnError.value = false
+    infoMessage.value = ''
+    warnMessage.value = ''
+    errorMessage.value = ''
   }
 })
 

@@ -3,6 +3,8 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { loggerInit } from './utils/logger'
+import { storeInit } from './utils/store'
+import { sqliteInit } from './utils/sqlite'
 
 import apiInit from './apis/index'
 
@@ -53,6 +55,10 @@ app.whenReady().then(() => {
   })
 
   loggerInit()
+
+  storeInit()
+
+  sqliteInit()
 
   createWindow()
 

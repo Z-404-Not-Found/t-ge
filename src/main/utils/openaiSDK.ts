@@ -2,17 +2,13 @@ import { ipcMain } from 'electron'
 import { OpenAI } from 'openai'
 import logger from '../utils/logger'
 
-const openai = new OpenAI({
-  apiKey: 'sk-nWogUKhdjpmMjmujbusnHqXQyBbZns5BZ6Cg6IQV9UCTAvyV',
-  baseURL: 'https://api.chatanywhere.tech/v1'
-})
-
-export default () => {
+const chatInit = (openai: OpenAI, model: string) => {
+  ipcMain.removeAllListeners('on-chat-send')
   ipcMain.on('on-chat-send', async (event, messages) => {
     await openai.chat.completions
       .create({
         messages: messages,
-        model: 'gpt-4o-mini',
+        model: model,
         stream: true
       })
       .then(async (completion) => {
@@ -26,8 +22,16 @@ export default () => {
         }
       })
       .catch((error) => {
-        logger.error('openai接口错误:' + error)
+        logger.error('openai SDK API Error: ' + error)
         event.sender.send('on-chat-stream-error', error)
       })
   })
+}
+
+export default (baseURL: string, apiKey: string, model: string) => {
+  const openai = new OpenAI({
+    apiKey: apiKey,
+    baseURL: baseURL
+  })
+  chatInit(openai, model)
 }

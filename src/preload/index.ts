@@ -17,7 +17,12 @@ const api = {
     downloadUpdate: () => ipcRenderer.send('download-update'),
     onUpdate: (channel, listener: (event, data) => void) => ipcRenderer.on(channel, listener)
   },
-  openai: {
+  aiProvider: {
+    getProviders: async () => await ipcRenderer.invoke('ai-provider-get'),
+    getCurrentProvider: async () => await ipcRenderer.invoke('ai-provider-get-current'),
+    updateProvider: async (provider) => await ipcRenderer.invoke('ai-provider-update', provider)
+  },
+  ai: {
     chat: {
       send: (messages) => ipcRenderer.send('on-chat-send', messages),
       onStream: (listener: (event, data) => void) => ipcRenderer.on('on-chat-stream', listener),
@@ -32,10 +37,10 @@ const api = {
     selectTest: async () => await ipcRenderer.invoke('select-test')
   },
   userData: {
-    setItem: async (key, value) => await ipcRenderer.invoke('user-data-setItem', key, value),
+    setItem: (key, value) => ipcRenderer.send('user-data-setItem', key, value),
     getItem: async (key) => await ipcRenderer.invoke('user-data-getItem', key),
-    removeItem: async (key) => await ipcRenderer.invoke('user-data-removeItem', key),
-    clear: async () => await ipcRenderer.invoke('user-data-clear')
+    removeItem: (key) => ipcRenderer.send('user-data-removeItem', key),
+    clear: () => ipcRenderer.send('user-data-clear')
   }
 }
 

@@ -11,7 +11,6 @@ const updateURL = is.dev
 export default () => {
   const mainWindow = BrowserWindow.getAllWindows()[0]
   let updateWindow: BrowserWindow
-  autoUpdater.forceDevUpdateConfig = true
   autoUpdater.setFeedURL({
     provider: 'github',
     repo: 't-ge',
@@ -60,12 +59,12 @@ export default () => {
   })
   // 无更新
   autoUpdater.on('update-not-available', () => {
-    mainWindow?.webContents.send('update-not-available', '已经是最新版本！')
+    mainWindow?.webContents.send('update-not-available')
   })
   // 更新错误事件
   autoUpdater.on('error', (err) => {
-    logger.error('更新错误：' + err)
-    updateWindow?.webContents.send('on-message', 'error', '更新错误：' + err)
+    logger.error('Update Error：' + err)
+    updateWindow?.webContents.send('on-message', 'error', 'Update Error: ' + err)
   })
   // 更新下载完成事件
   autoUpdater.on('update-downloaded', () => {

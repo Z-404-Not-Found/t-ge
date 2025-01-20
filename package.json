@@ -25,7 +25,7 @@
     "better-sqlite3": "^11.7.0",
     "electron-log": "^5.2.4",
     "electron-updater": "^6.1.7",
-    "openai": "^4.77.0"
+    "openai": "^4.79.1"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",
