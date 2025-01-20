@@ -20,8 +20,8 @@
         <div class="font-bold">原始安装包大小：{{ totalBytes }}MB</div>
       </template>
       <template #text>
-        <div v-if="!isDownloading" class="mt-2 h-32 overflow-y-auto bg-gray-100 rounded p-3">
-          <div class="updateNote" v-html="releaseNotes"></div>
+        <div v-if="!isDownloading" class="mt-2 h-32 overflow-y-auto bg-gray-100 rounded">
+          <MdPreview class="!bg-gray-100" :editorId="id" :modelValue="releaseNotes"></MdPreview>
         </div>
         <div v-else-if="!isDownloaded" class="mt-2 h-32 flex flex-col justify-center">
           <div class="mb-4 text-gray-500 font-semibold">正在下载。。。</div>
@@ -79,7 +79,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import moment from 'moment'
-import MarkdownIt from 'markdown-it'
+import { MdPreview } from 'md-editor-v3'
+import 'md-editor-v3/lib/preview.css'
+
+const id = 'preview-only'
 
 const isOnError = ref(false)
 const error = ref()
@@ -94,8 +97,6 @@ const downloadingBytesPerSecond = ref(0)
 const downloadingPercentage = ref(0)
 const downloadingTotalBytes = ref(0)
 const downloadingTransferredBytes = ref(0)
-
-const md = new MarkdownIt()
 
 const closeWindow = () => {
   window.api.windowHandlers.close()
@@ -116,7 +117,7 @@ const onUpdateInit = () => {
   window.api.update.onUpdate('update-available', (_event, data) => {
     isLoading.value = false
     newVersion.value = data.version
-    releaseNotes.value = md.render(data.releaseNotes)
+    releaseNotes.value = data.releaseNotes
     releaseDate.value = moment(data.releaseDate).format('YYYY-MM-DD HH:mm')
     totalBytes.value = ((data.files[0].size as number) / 1000 / 1000).toFixed(2)
   })
@@ -143,12 +144,15 @@ onMounted(() => {
 </script>
 
 <style>
-.updateNote h2 {
-  font-size: 20px;
-  font-weight: 600;
+.md-editor-preview h2 {
+  margin: 0 !important;
+  font-size: larger;
 }
-.updateNote li {
-  list-style: disc;
-  margin-left: 24px;
+.md-editor-preview ul {
+  padding-left: 1.2em;
+}
+.md-editor-preview ul li {
+  margin: 0 !important;
+  font-size: 16px;
 }
 </style>

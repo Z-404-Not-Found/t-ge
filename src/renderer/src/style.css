@@ -15,3 +15,7 @@ div::-webkit-scrollbar-track {
   background-color: #ededed;
   border-radius: 4px;
 }
+
+*{
+  list-style-type: disc
+}
