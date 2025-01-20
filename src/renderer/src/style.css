@@ -16,6 +16,6 @@ div::-webkit-scrollbar-track {
   border-radius: 4px;
 }
 
-*{
-  list-style-type: disc
+* {
+  list-style-type: disc;
 }
