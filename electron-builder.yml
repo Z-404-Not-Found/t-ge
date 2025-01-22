@@ -16,7 +16,7 @@ win:
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: t哥
-  uninstallDisplayName: ${productName}-uninstaller
+  uninstallDisplayName: ${productName}
   createDesktopShortcut: always
   oneClick: false
   allowToChangeInstallationDirectory: true
