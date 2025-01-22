@@ -12,11 +12,11 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: t哥
+  executableName: t-ge
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
-  shortcutName: ${productName}
-  uninstallDisplayName: ${productName}
+  shortcutName: t哥
+  uninstallDisplayName: ${productName}-uninstaller
   createDesktopShortcut: always
   oneClick: false
   allowToChangeInstallationDirectory: true
