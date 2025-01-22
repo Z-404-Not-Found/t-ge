@@ -34,7 +34,12 @@ declare global {
        * @returns 错误信息
        */
       onMessage: (
-        listener: (event: IpcRendererEvent, type: string, message: string) => void
+        listener: (
+          event: IpcRendererEvent,
+          severity: 'error' | 'success' | 'secondary' | 'info' | 'warn' | 'contrast',
+          summary: string,
+          detail: string
+        ) => void
       ) => void
       /**
        * 打开日志文件
@@ -46,15 +51,22 @@ declare global {
        */
       windowHandlers: {
         /**
-         * 获取窗口是否最大化
-         * @returns true: 窗口最大化 false: 窗口非最大化
-         */
-        isMainWindowMaximized: () => Promise<boolean>
-        /**
          * 窗口最大化
-         * @returns true: 窗口最大化 false: 窗口非最大化
+         * @returns void
          */
-        toggleMaximized: () => Promise<boolean>
+        toggleMaximized: () => void
+        /**
+         * 窗口是否最大化
+         * @param listener 窗口是否最大化
+         * @returns void
+         */
+        isMaximized: (listener: (event: IpcRendererEvent, data: void) => void) => void
+        /**
+         * 窗口是否未最大化
+         * @param listener 窗口是否未最大化
+         * @returns void
+         */
+        isUnmaximized: (listener: (event: IpcRendererEvent, data: void) => void) => void
         /**
          * 窗口最小化
          * @returns void
@@ -65,6 +77,20 @@ declare global {
          * @returns void
          */
         close: () => void
+        /**
+         * 切换暗黑模式
+         * @param mode 模式，可选值：'dark' | 'light' | 'system'
+         * @returns void
+         */
+        toggleDarkMode: (mode: 'dark' | 'light' | 'system') => void
+        /**
+         * 监听暗黑模式切换
+         * @param listener 暗黑模式切换，回调参数类型为'dark' | 'light' | 'system'
+         * @returns void
+         */
+        onToggleDarkMode: (
+          listener: (event: IpcRendererEvent, mode: 'dark' | 'light' | 'system') => void
+        ) => void
       }
       /**
        * 更新相关接口
@@ -155,7 +181,7 @@ declare global {
         insertTest: (data: string) => Promise<void>
         selectTest: () => Promise<string[]>
       }
-      userData: {
+      store: {
         /**
          * 设置用户数据
          * @param key 键
@@ -168,7 +194,7 @@ declare global {
          * @param key 键
          * @returns 值
          */
-        getItem: (key: string) => Promise<object | null>
+        getItem: (key: string) => Promise<>
         /**
          * 删除用户数据
          * @param key 键

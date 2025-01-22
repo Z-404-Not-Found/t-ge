@@ -2,8 +2,8 @@
   <div class="h-full w-full overflow-y-auto p-4">
     <div class="py-2">
       <div>聊天测试</div>
-      <v-textarea v-model="message" label="输入聊天内容"></v-textarea>
-      <v-btn icon="mdi-chat" @click="chat"></v-btn>
+      <InputText v-model="message" placeholder="输入聊天内容"></InputText>
+      <Button icon="pi pi-comment" @click="chat"></Button>
       <div>res: {{ resMessage }}</div>
       <div>isEnd: {{ isEnd }}</div>
       <div>isError: {{ isError }}</div>
@@ -60,4 +60,4 @@ onMounted(() => {
 })
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

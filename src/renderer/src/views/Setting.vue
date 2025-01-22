@@ -1,38 +1,41 @@
 <template>
   <div>
     <div>Setting</div>
-    <v-btn class="mr-4" icon="mdi-update" variant="text" @click="userCheckUpdate"></v-btn>
-    <v-snackbar v-model="isCheckingForUpdate" timeout="-1">
-      <div>正在检查更新</div>
-      <v-progress-linear indeterminate></v-progress-linear>
-    </v-snackbar>
-    <v-snackbar v-model="isNoAvailableUpdate">
-      {{ updateStatus }}
-      <template #actions>
-        <v-btn color="blue" variant="text" @click="isNoAvailableUpdate = false"> 知道了 </v-btn>
-      </template>
-    </v-snackbar>
+    <Button class="mr-4" icon="pi pi-sync" @click="userCheckUpdate"></Button>
+    <SelectButton
+      v-model="toggleDarkMode"
+      :options="toggleDarkModeOptions"
+      optionLabel="name"
+      optionValue="value"
+      @change="toggleDarkModeChange"
+    />
     <div>
-      <v-select
+      <Select
         v-model="aiProviderSelectedKey"
-        :items="aiProviderOptions"
-        label="AI Provider"
-        @update:modelValue="
+        :options="aiProviderOptions"
+        optionLabel="name"
+        optionValue="key"
+        placeholder="AI Provider"
+        @change="
           () => {
             aiProviderSelected = aiProviderList!.find((item) => item.key === aiProviderSelectedKey)
           }
         "
-      ></v-select>
-      <v-text-field
+      ></Select>
+      <div
         v-for="(value, key, index) in aiProviderList?.find(
           (item) => item.key === aiProviderSelectedKey
         )?.requiredValues"
         :key="index"
-        v-model="aiProviderSelected.requiredValues[key]"
-        :label="key"
-        :placeholder="value"
-      ></v-text-field>
-      <v-btn icon="mdi-update" variant="text" @click="updateAiProvider">updateAiProvider</v-btn>
+      >
+        <label :for="key"> {{ key }}</label>
+        <InputText
+          :id="key"
+          v-model="aiProviderSelected.requiredValues[key]"
+          :placeholder="value"
+        ></InputText>
+      </div>
+      <Button @click="updateAiProvider">updateAiProvider</Button>
     </div>
   </div>
 </template>
@@ -66,23 +69,49 @@ const aiProviderOptions = ref()
 const aiProviderSelectedKey = ref<string>()
 const aiProviderSelected = ref()
 const updateAiProvider = () => {
-  console.log(aiProviderSelected.value)
-
   window.api.aiProvider.updateProvider(toRaw(aiProviderSelected.value)).then((data) => {
     onMessage('info', data)
   })
 }
+
+const toggleDarkMode = ref('system')
+const toggleDarkModeOptions = ref([
+  {
+    name: '跟随系统',
+    value: 'system'
+  },
+  {
+    name: '暗黑模式',
+    value: 'dark'
+  },
+  {
+    name: '白天模式',
+    value: 'light'
+  }
+])
+const toggleDarkModeChange = (event) => {
+  window.api.windowHandlers.toggleDarkMode(event.value)
+}
 onMounted(() => {
+  window.api.store.getItem('windowHandlers').then((data) => {
+    if (data.darkMode === 'dark') {
+      toggleDarkMode.value = 'dark'
+    } else if (data.darkMode === 'light') {
+      toggleDarkMode.value = 'light'
+    } else {
+      toggleDarkMode.value = 'system'
+    }
+  })
   window.api.aiProvider.getProviders().then((data) => {
     aiProviderList.value = data
     aiProviderOptions.value = data.map((item) => {
       return {
-        title: item.name,
-        value: item.key
+        name: item.name,
+        key: item.key
       }
     })
   })
 })
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

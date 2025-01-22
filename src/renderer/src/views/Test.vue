@@ -1,5 +1,6 @@
 <template>
-  <div class="h-full w-full overflow-y-auto p-4">
+  <div></div>
+  <!-- <div class="h-full w-full overflow-y-auto p-4">
     <div class="py-2">
       <div>聊天测试</div>
       <v-textarea v-model="message" label="输入聊天内容"></v-textarea>
@@ -40,96 +41,96 @@
       <div>获取到的json</div>
       <div>{{ getJson }}</div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, inject } from 'vue'
+// import { ref, onMounted, inject } from 'vue'
 
-const onMessage = inject('onMessage') as (type: string, message: string) => void
+// const onMessage = inject('onMessage') as (type: string, message: string) => void
 
-const message = ref('')
-const resMessage = ref('')
-const isEnd = ref(false)
-const isError = ref(false)
-const errorMessage = ref('')
+// const message = ref('')
+// const resMessage = ref('')
+// const isEnd = ref(false)
+// const isError = ref(false)
+// const errorMessage = ref('')
 
-const insertTestItem = ref()
-const selectTestItem = ref()
+// const insertTestItem = ref()
+// const selectTestItem = ref()
 
-const insertJsonKey = ref()
-const insertJsonValue = ref()
-const getJsonKey = ref()
-const getJson = ref()
-const deleteJsonKey = ref()
+// const insertJsonKey = ref()
+// const insertJsonValue = ref()
+// const getJsonKey = ref()
+// const getJson = ref()
+// const deleteJsonKey = ref()
 
-let messageList
+// let messageList
 
-const chat = () => {
-  resMessage.value = ''
-  isEnd.value = false
-  isError.value = false
-  messageList = [
-    {
-      role: 'system',
-      content: '你是一个助手'
-    },
-    {
-      role: 'user',
-      content: message.value
-    }
-  ]
-  if (!message.value) {
-    onMessage('warn', '请输入聊天内容')
-    return
-  }
-  window.api.ai.chat.send(messageList)
-}
+// const chat = () => {
+//   resMessage.value = ''
+//   isEnd.value = false
+//   isError.value = false
+//   messageList = [
+//     {
+//       role: 'system',
+//       content: '你是一个助手'
+//     },
+//     {
+//       role: 'user',
+//       content: message.value
+//     }
+//   ]
+//   if (!message.value) {
+//     onMessage('warn', '请输入聊天内容')
+//     return
+//   }
+//   window.api.ai.chat.send(messageList)
+// }
 
-const insertTest = () => {
-  window.api.sqlite.insertTest(insertTestItem.value).then(() => {})
-}
+// const insertTest = () => {
+//   window.api.sqlite.insertTest(insertTestItem.value).then(() => {})
+// }
 
-const selectTest = () => {
-  window.api.sqlite.selectTest().then((res) => {
-    selectTestItem.value = res
-  })
-}
+// const selectTest = () => {
+//   window.api.sqlite.selectTest().then((res) => {
+//     selectTestItem.value = res
+//   })
+// }
 
-const insertJsonTest = () => {
-  window.api.userData.setItem(insertJsonKey.value, insertJsonValue.value)
-}
+// const insertJsonTest = () => {
+//   window.api.userData.setItem(insertJsonKey.value, insertJsonValue.value)
+// }
 
-const getJsonTest = () => {
-  if (!getJsonKey.value) {
-    onMessage('warn', '请输入获取Json测试内容key')
-    return
-  }
-  window.api.userData.getItem(getJsonKey.value).then((res) => {
-    getJson.value = res
-  })
-}
+// const getJsonTest = () => {
+//   if (!getJsonKey.value) {
+//     onMessage('warn', '请输入获取Json测试内容key')
+//     return
+//   }
+//   window.api.userData.getItem(getJsonKey.value).then((res) => {
+//     getJson.value = res
+//   })
+// }
 
-const delJsonTest = () => {
-  if (!deleteJsonKey.value) {
-    onMessage('warn', '请输入删除Json测试内容key')
-    return
-  }
-  window.api.userData.removeItem(deleteJsonKey.value)
-}
+// const delJsonTest = () => {
+//   if (!deleteJsonKey.value) {
+//     onMessage('warn', '请输入删除Json测试内容key')
+//     return
+//   }
+//   window.api.userData.removeItem(deleteJsonKey.value)
+// }
 
-onMounted(() => {
-  window.api.ai.chat.onStream((_event, data) => {
-    resMessage.value += data
-  })
-  window.api.ai.chat.onStreamEnd(() => {
-    isEnd.value = true
-  })
-  window.api.ai.chat.onStreamError((_event, data) => {
-    isError.value = true
-    errorMessage.value = data
-  })
-})
+// onMounted(() => {
+//   window.api.ai.chat.onStream((_event, data) => {
+//     resMessage.value += data
+//   })
+//   window.api.ai.chat.onStreamEnd(() => {
+//     isEnd.value = true
+//   })
+//   window.api.ai.chat.onStreamError((_event, data) => {
+//     isError.value = true
+//     errorMessage.value = data
+//   })
+// })
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

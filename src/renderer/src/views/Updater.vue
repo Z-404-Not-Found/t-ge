@@ -1,102 +1,122 @@
 <template>
   <div class="h-svh w-svw">
-    <v-skeleton-loader
-      v-if="isLoading"
-      class="h-full"
-      type="avatar,article,text,text,text,actions"
-    ></v-skeleton-loader>
-    <v-card v-else-if="!isOnError" class="h-full w-full">
-      <template #prepend>
-        <v-icon size="32">mdi-update</v-icon>
+    <!-- 骨架 -->
+    <Card v-if="isLoading" class="h-full w-full">
+      <template #content>
+        <div class="p-2">
+          <Skeleton class="mb-4" height="1.6rem" width="50%" />
+          <Skeleton class="mb-2" height="1.2rem" width="80%" />
+          <Skeleton class="mb-4" height="1.2rem" width="60%" />
+          <Skeleton class="mb-4" height="7.2rem" />
+          <div class="flex gap-4 mt-1">
+            <Skeleton height="3rem" />
+            <Skeleton height="3rem" />
+          </div>
+        </div>
       </template>
+    </Card>
+    <!-- 加载完成 -->
+    <Card v-else-if="!isOnError" class="h-full w-full">
       <template #title>
-        <span class="font-bold">发现新版本！！</span>
+        <div class="flex items-center">
+          <i class="pi pi-arrow-circle-up mr-2 !text-2xl"></i>
+          <span class="font-bold">发现新版本！！</span>
+        </div>
       </template>
       <template #subtitle>
         <div class="font-bold">
           <span>v{{ newVersion }}</span>
           <span class="ml-2">发布日期：{{ releaseDate }}</span>
         </div>
-        <div class="font-bold">原始安装包大小：{{ totalBytes }}MB</div>
-      </template>
-      <template #text>
-        <div v-if="!isDownloading" class="mt-2 h-32 overflow-y-auto bg-gray-100 rounded">
-          <MdPreview class="!bg-gray-100" :editorId="id" :modelValue="releaseNotes"></MdPreview>
-        </div>
+        <div class="font-bold">原始安装包大小：{{ totalBytes }}MB</div></template
+      >
+      <template #content>
+        <!-- 更新日志 -->
+        <ScrollPanel v-if="!isDownloading" class="mt-2 h-32 rounded bg-gray-100 dark:bg-black">
+          <MdPreview
+            style="background: transparent !important"
+            :editorId="id"
+            :modelValue="releaseNotes"
+          ></MdPreview>
+        </ScrollPanel>
+        <!-- 下载进度 -->
         <div v-else-if="!isDownloaded" class="mt-2 h-32 flex flex-col justify-center">
-          <div class="mb-4 text-gray-500 font-semibold">正在下载。。。</div>
-          <div class="mb-2 text-gray-500 font-semibold text-center">
-            {{ downloadingPercentage }}%
-          </div>
-          <v-progress-linear v-model="downloadingPercentage"> </v-progress-linear>
-          <div class="flex justify-between text-gray-500 mt-2">
+          <div class="mb-4 font-semibold">正在下载。。。</div>
+          <ProgressBar :value="downloadingPercentage"></ProgressBar>
+          <div class="flex justify-between mt-2">
             <div>{{ downloadingBytesPerSecond }}KB/s</div>
             <div>{{ downloadingTransferredBytes }}MB / {{ downloadingTotalBytes }}MB</div>
           </div>
         </div>
+        <!-- 下载完成 -->
         <div v-else class="mt-2 h-32 font-semibold flex items-center justify-center">
           下载完成，点击安装将退出并安装！
         </div>
       </template>
-      <template #actions>
-        <div class="w-full flex justify-end">
-          <div v-if="!isDownloading">
-            <v-btn @click="closeWindow">稍后再说</v-btn>
-            <v-btn @click="downloadUpdate">下载更新</v-btn>
-          </div>
-          <div v-else>
-            <v-btn :disabled="!isDownloaded" @click="installUpdate">安装</v-btn>
-          </div>
+      <template #footer>
+        <div v-if="!isDownloading" class="flex gap-4 mt-1">
+          <Button
+            label="稍后再说"
+            severity="secondary"
+            outlined
+            class="w-full"
+            @click="closeWindow"
+          />
+          <Button label="现在下载" class="w-full" @click="downloadUpdate" />
+        </div>
+        <div v-else class="flex gap-4 mt-1 justify-end">
+          <Button :disabled="!isDownloaded" @click="installUpdate">安装</Button>
         </div>
       </template>
-    </v-card>
-    <v-card v-else class="h-full w-full">
-      <template #prepend>
-        <v-icon size="32" color="red">mdi-alert</v-icon>
-      </template>
+    </Card>
+    <!-- 错误 -->
+    <Card v-else class="h-full w-full">
       <template #title>
-        <span class="font-bold">更新失败！！</span>
+        <div class="flex items-center">
+          <i class="pi pi-times-circle mr-2 !text-2xl text-red-500"></i>
+          <span class="font-bold text-red-500"> {{ errorTitle + '！！！' }}</span>
+        </div>
       </template>
       <template #subtitle>
         <div class="font-bold">请检查网络链接或重试！</div>
       </template>
-      <template #text>
-        <div class="mt-2 h-36 overflow-y-auto bg-gray-100 rounded p-3">
-          <div class="text-lg font-semibold">错误信息：</div>
-          <div>{{ error }}</div>
+      <template #content>
+        <ScrollPanel class="mt-2 h-36 p-2 rounded bg-gray-100 dark:bg-black">
+          {{ errorMessage }}
+        </ScrollPanel>
+      </template>
+      <template #footer>
+        <div class="flex gap-4 mt-1">
+          <Button label="关闭" severity="secondary" outlined class="w-full" @click="closeWindow" />
+          <Button label="重试" class="w-full" @click="downloadUpdate" />
         </div>
       </template>
-      <template #actions>
-        <div class="w-full flex justify-end">
-          <v-btn @click="downloadUpdate">重试</v-btn>
-          <v-btn @click="closeWindow">关闭</v-btn>
-        </div>
-      </template>
-    </v-card>
+    </Card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import moment from 'moment'
-import { MdPreview } from 'md-editor-v3'
-import 'md-editor-v3/lib/preview.css'
 
-const id = 'preview-only'
-
-const isOnError = ref(false)
-const error = ref()
 const isLoading = ref(true)
-const isDownloading = ref(false)
-const isDownloaded = ref(false)
 const newVersion = ref()
 const releaseNotes = ref()
 const releaseDate = ref()
 const totalBytes = ref()
+const isDownloading = ref(false)
+const isDownloaded = ref(false)
 const downloadingBytesPerSecond = ref(0)
 const downloadingPercentage = ref(0)
 const downloadingTotalBytes = ref(0)
 const downloadingTransferredBytes = ref(0)
+const isOnError = ref(false)
+const errorTitle = ref()
+const errorMessage = ref()
+
+import { MdPreview } from 'md-editor-v3'
+import 'md-editor-v3/lib/preview.css'
+const id = 'preview-only'
 
 const closeWindow = () => {
   window.api.windowHandlers.close()
@@ -130,29 +150,60 @@ const onUpdateInit = () => {
   window.api.update.onUpdate('update-downloaded', () => {
     isDownloaded.value = true
   })
-  window.api.onMessage((_event, type, message) => {
-    if (type === 'error') {
+  window.api.onMessage((_event, severity, summary, detail) => {
+    if (severity === 'error') {
       isOnError.value = true
-      error.value = message
+      errorTitle.value = summary
+      errorMessage.value = detail
     }
   })
 }
 
+import toggleDarkMode from '@renderer/utils/toggleDarkMode'
+
 onMounted(() => {
+  window.api.store.getItem('windowHandlers').then((data) => {
+    if (data.darkMode === 'dark') {
+      toggleDarkMode('dark')
+    } else if (data.darkMode === 'light') {
+      toggleDarkMode('light')
+    } else {
+      toggleDarkMode('system')
+    }
+  })
+  window.api.windowHandlers.onToggleDarkMode((_event, mode) => {
+    toggleDarkMode(mode)
+  })
   onUpdateInit()
 })
 </script>
 
-<style>
-.md-editor-preview h2 {
-  margin: 0 !important;
-  font-size: larger;
+<style lang="scss">
+.md-editor-preview-wrapper {
+  padding: 0.5rem;
 }
-.md-editor-preview ul {
-  padding-left: 1.2em;
+.md-editor-preview {
+  h2 {
+    margin: 0 !important;
+    font-size: larger;
+    color: #000 !important;
+  }
+  ul {
+    padding-left: 1.2em;
+    li {
+      margin: 0 !important;
+      font-size: 16px;
+      list-style-type: disc;
+      color: #000 !important;
+    }
+  }
 }
-.md-editor-preview ul li {
-  margin: 0 !important;
-  font-size: 16px;
+.dark {
+  .md-editor-preview h2 {
+    color: #fff !important;
+  }
+  .md-editor-preview ul li {
+    color: #fff !important;
+  }
 }
 </style>

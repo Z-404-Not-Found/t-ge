@@ -3,13 +3,18 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // 渲染器的自定义 API
 const api = {
-  onMessage: (listener: (event, ...data) => void) => ipcRenderer.on('on-message', listener),
+  onMessage: (listener: (event, severity, summary, detail) => void) =>
+    ipcRenderer.on('on-message', listener),
   openLogFile: () => ipcRenderer.send('open-log-file'),
   windowHandlers: {
-    isMainWindowMaximized: async () => await ipcRenderer.invoke('is-mainWindow-maximized'),
-    toggleMaximized: async () => await ipcRenderer.invoke('toggle-window-maximize'),
+    toggleMaximized: () => ipcRenderer.send('toggle-window-maximize'),
+    isMaximized: (listener: (event, data) => void) => ipcRenderer.on('on-maximize', listener),
+    isUnmaximized: (listener: (event, data) => void) => ipcRenderer.on('on-unmaximize', listener),
     minimize: () => ipcRenderer.send('window-minimize'),
-    close: () => ipcRenderer.send('window-close')
+    close: () => ipcRenderer.send('window-close'),
+    toggleDarkMode: (mode) => ipcRenderer.send('toggle-dark-mode', mode),
+    onToggleDarkMode: (listener: (event, mode) => void) =>
+      ipcRenderer.on('on-toggle-dark-mode', listener)
   },
   update: {
     checkForUpdates: () => ipcRenderer.send('check-for-updates'),
@@ -36,7 +41,7 @@ const api = {
     insertTest: async (data) => await ipcRenderer.invoke('insert-test', data),
     selectTest: async () => await ipcRenderer.invoke('select-test')
   },
-  userData: {
+  store: {
     setItem: (key, value) => ipcRenderer.send('user-data-setItem', key, value),
     getItem: async (key) => await ipcRenderer.invoke('user-data-getItem', key),
     removeItem: (key) => ipcRenderer.send('user-data-removeItem', key),

@@ -3,65 +3,71 @@
     <div>
       <!-- 拖动区域 -->
       <div class="text-gray-500" style="-webkit-app-region: drag">Layout</div>
-      <v-btn icon="mdi-chat" variant="text" @click="router.push('/chat')"></v-btn>
-      <v-btn icon="mdi-cog" variant="text" @click="router.push('/setting')"></v-btn>
-      <v-btn icon="mdi-window-minimize" variant="text" @click="minimizeWindow"></v-btn>
-      <v-btn :icon="maximizedIcon" variant="text" @click="toggleMaximized"></v-btn>
-      <v-btn icon="mdi-window-close" variant="text" @click="closeWindow"></v-btn>
+      <Button label="Success" severity="success" />
+      <Button icon="pi pi-comment" @click="router.push('/chat')"></Button>
+      <Button icon=" pi pi-cog" @click="router.push('/setting')"></Button>
+      <Button icon="pi pi-minus" @click="minimizeWindow"></Button>
+      <Button :icon="maximizedIcon" @click="toggleMaximized"></Button>
+      <Button icon="pi pi-times" @click="closeWindow"></Button>
     </div>
     <div class="flex-1 overflow-hidden">
       <RouterView />
     </div>
-    <!-- 错误处理 -->
-    <v-snackbar
-      v-model="isOnMessage"
-      max-height="100"
-      timeout="3000"
-      :timer="isOnError ? 'red' : isOnWarn ? 'yellow' : 'green'"
-    >
-      <div class="flex items-center">
-        <div class="mr-4">
-          <v-icon v-if="isOnError" color="red"> mdi-alert </v-icon>
-          <v-icon v-if="isOnWarn" color="yellow"> mdi-alert-circle </v-icon>
-          <v-icon v-if="isOnInfo" color="green"> mdi-information </v-icon>
+    <!-- 全局消息 -->
+    <Toast v-if="!isOnError" class="mt-8" />
+    <Toast v-else class="mt-8" @close="isOnError = false">
+      <template #message="slotProps">
+        <div class="flex flex-1">
+          <i class="pi pi-times-circle"></i>
+          <div class="ml-2 text-sm">
+            <div class="text-sm">{{ slotProps.message.summary }}</div>
+            <div class="text-xs mt-2">
+              {{ slotProps.message.detail }}
+            </div>
+            <div class="flex justify-end mt-2">
+              <Button
+                severity="danger"
+                size="small"
+                variant="text"
+                label="查看详情"
+                @click="checkError"
+              />
+              <Button
+                severity="secondary"
+                size="small"
+                variant="text"
+                label="关闭"
+                @click="
+                  () => {
+                    toast.remove(slotProps.message)
+                    isOnError = false
+                  }
+                "
+              />
+            </div>
+          </div>
         </div>
-        <div
-          v-if="isOnError"
-          class="max-w-96"
-          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
-        >
-          {{ errorMessage }}
-        </div>
-        <div v-if="isOnWarn" class="max-w-96">{{ warnMessage }}</div>
-        <div v-if="isOnInfo" class="max-w-96">{{ infoMessage }}</div>
-      </div>
-      <template #actions>
-        <v-btn v-if="isOnError" color="red" variant="text" @click="checkError"> 查看详情 </v-btn>
-        <v-btn v-if="isOnWarn" color="yellow" variant="text" @click="isOnMessage = false">
-          知道了
-        </v-btn>
-        <v-btn v-if="isOnInfo" color="green" variant="text" @click="isOnMessage = false">
-          查看详情
-        </v-btn>
       </template>
-    </v-snackbar>
+    </Toast>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, provide, watch } from 'vue'
+import { ref, onMounted, provide } from 'vue'
 import router from '@renderer/routers'
+import { useToast } from 'primevue/usetoast'
+import toggleDarkMode from '@renderer/utils/toggleDarkMode'
 
-const maximizedIcon = ref<string>('')
+const toast = useToast()
+
+const maximizedIcon = ref('pi pi-window-maximize')
 
 const minimizeWindow = () => {
   window.api.windowHandlers.minimize()
 }
 
 const toggleMaximized = () => {
-  window.api.windowHandlers.toggleMaximized().then((isMaximized) => {
-    maximizedIcon.value = isMaximized ? 'mdi-window-restore' : 'mdi-window-maximize'
-  })
+  window.api.windowHandlers.toggleMaximized()
 }
 
 const closeWindow = () => {
@@ -73,43 +79,33 @@ const checkUpdate = () => {
 }
 
 const isOnMessage = ref(false)
-const isOnInfo = ref(false)
-const infoMessage = ref('')
-const isOnWarn = ref(false)
-const warnMessage = ref('')
 const isOnError = ref(false)
-const errorMessage = ref('')
 
-const onMessage = (type, message) => {
-  isOnMessage.value = true
-  switch (type) {
-    case 'info':
-      isOnInfo.value = true
-      infoMessage.value = message
-      break
-    case 'warn':
-      isOnWarn.value = true
-      warnMessage.value = message
-      break
-    case 'error':
-      isOnError.value = true
-      errorMessage.value = message
-      break
+const onMessage = (data: {
+  severity: 'error' | 'success' | 'secondary' | 'info' | 'warn' | 'contrast'
+  summary: string
+  detail: string
+}) => {
+  if (data.severity === 'error') {
+    isOnError.value = true
+    setTimeout(() => {
+      toast.add({
+        severity: data.severity,
+        summary: data.summary,
+        detail: data.detail
+      })
+    }, 1)
+  } else {
+    toast.add({
+      severity: data.severity,
+      summary: data.summary,
+      detail: data.detail,
+      life: 3000
+    })
   }
 }
 
 provide('onMessage', onMessage)
-
-watch(isOnMessage, (value) => {
-  if (!value) {
-    isOnInfo.value = false
-    isOnWarn.value = false
-    isOnError.value = false
-    infoMessage.value = ''
-    warnMessage.value = ''
-    errorMessage.value = ''
-  }
-})
 
 const checkError = () => {
   isOnMessage.value = false
@@ -117,14 +113,33 @@ const checkError = () => {
 }
 
 onMounted(() => {
-  window.api.windowHandlers.isMainWindowMaximized().then((isMaximized) => {
-    maximizedIcon.value = isMaximized ? 'mdi-window-restore' : 'mdi-window-maximize'
+  window.api.windowHandlers.isMaximized(() => {
+    maximizedIcon.value = 'pi pi-window-minimize'
   })
-  window.api.onMessage((_event, type, message) => {
-    onMessage(type, message)
+  window.api.windowHandlers.isUnmaximized(() => {
+    maximizedIcon.value = 'pi pi-window-maximize'
+  })
+  window.api.windowHandlers.onToggleDarkMode((_event, mode) => {
+    toggleDarkMode(mode)
+  })
+  window.api.onMessage((_event, severity, summary, detail) => {
+    onMessage({
+      severity,
+      summary,
+      detail
+    })
+  })
+  window.api.store.getItem('windowHandlers').then((data) => {
+    if (data.darkMode === 'dark') {
+      toggleDarkMode('dark')
+    } else if (data.darkMode === 'light') {
+      toggleDarkMode('light')
+    } else {
+      toggleDarkMode('system')
+    }
   })
   checkUpdate()
 })
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

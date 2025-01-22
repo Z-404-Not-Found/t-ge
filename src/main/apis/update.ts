@@ -34,9 +34,9 @@ export default () => {
       const { width, height } = screen.getPrimaryDisplay().workAreaSize
       updateWindow.setBounds({
         x: width - 400,
-        y: height - 300,
+        y: height - 320,
         width: 400,
-        height: 300
+        height: 320
       })
       updateWindow.loadURL(updateURL)
     }
@@ -64,7 +64,7 @@ export default () => {
   // 更新错误事件
   autoUpdater.on('error', (err) => {
     logger.error('Update Error：' + err)
-    updateWindow?.webContents.send('on-message', 'error', 'Update Error: ' + err)
+    updateWindow?.webContents.send('on-message', 'error', '出错了', err + '')
   })
   // 更新下载完成事件
   autoUpdater.on('update-downloaded', () => {

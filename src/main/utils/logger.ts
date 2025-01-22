@@ -22,7 +22,7 @@ export default {
   },
   error: (param) => {
     const mainWindow = BrowserWindow.getAllWindows()[0]
-    mainWindow?.webContents.send('on-message', 'error', '错误：' + param)
+    mainWindow?.webContents.send('on-message', 'error', '出错了', param + '')
     log.error('[main] ' + param)
   },
   warn: (param) => {
