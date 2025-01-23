@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @variant dark (&:where(.dark, .dark *));
 
 div::-webkit-scrollbar {
