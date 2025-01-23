@@ -4,6 +4,5 @@ module.exports = {
   theme: {
     extend: {}
   },
-  plugins: [require('tailwindcss-primeui')],
   darkMode: 'class'
 }
