@@ -11,12 +11,14 @@ const updateURL = is.dev
 export default () => {
   const mainWindow = BrowserWindow.getAllWindows()[0]
   let updateWindow: BrowserWindow
+
   autoUpdater.setFeedURL({
     provider: 'github',
     repo: 't-ge',
     owner: 'Z-404-Not-Found'
   })
   autoUpdater.autoDownload = false
+
   const createUpdateWindow = () => {
     if (!updateWindow || updateWindow.isDestroyed()) {
       updateWindow = new BrowserWindow({
@@ -41,6 +43,7 @@ export default () => {
       updateWindow.loadURL(updateURL)
     }
   }
+
   // 监听更新事件
   autoUpdater.on('checking-for-update', () => {
     mainWindow?.webContents.send('checking-for-update')

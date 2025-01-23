@@ -10,7 +10,6 @@ export const storeInit = () => {
   if (!existsSync(userDataPath)) {
     mkdirSync(userDataPath)
   }
-
   if (!existsSync(dataFilePath)) {
     writeFileSync(dataFilePath, JSON.stringify({}))
   }

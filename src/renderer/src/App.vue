@@ -4,11 +4,4 @@
   </div>
 </template>
 <script setup lang="ts"></script>
-<style>
-body {
-  margin: 0;
-}
-html {
-  overflow-y: auto !important;
-}
-</style>
+<style scoped lang="sass"></style>

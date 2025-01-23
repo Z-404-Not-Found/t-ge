@@ -1,7 +1,13 @@
 <template>
   <div>
     <div>Setting</div>
-    <Button class="mr-4" icon="pi pi-sync" @click="userCheckUpdate"></Button>
+    <Button
+      class="mr-4"
+      :icon="checkUpdateInfo"
+      :label="checkUpdateStatus"
+      :loading="isCheckingForUpdate"
+      @click="userCheckUpdate"
+    ></Button>
     <SelectButton
       v-model="toggleDarkMode"
       :options="toggleDarkModeOptions"
@@ -45,16 +51,21 @@ import { ref, inject, onMounted, toRaw } from 'vue'
 
 const onMessage = inject('onMessage') as (type: string, message: string) => void
 
-const isNoAvailableUpdate = ref<boolean>(false)
-const isCheckingForUpdate = ref<boolean>(false)
-const updateStatus = ref<string>('')
+const isNoAvailableUpdate = ref(false)
+const isCheckingForUpdate = ref(false)
+const checkUpdateStatus = ref('检查更新')
+const checkUpdateInfo = ref('pi pi-sync')
 const userCheckUpdate = () => {
   window.api.update.onUpdate('update-not-available', () => {
     isCheckingForUpdate.value = false
-    updateStatus.value = '已经是最新版本！'
+    checkUpdateStatus.value = '已经是最新版本'
+    checkUpdateInfo.value = 'pi pi-check'
     isNoAvailableUpdate.value = true
   })
   window.api.update.onUpdate('update-available', () => {
+    isCheckingForUpdate.value = false
+    checkUpdateStatus.value = '发现新版本'
+    checkUpdateInfo.value = 'pi pi-arrow-circle-up'
     isCheckingForUpdate.value = false
   })
   window.api.onMessage(() => {
@@ -62,16 +73,7 @@ const userCheckUpdate = () => {
   })
   window.api.update.checkForUpdates()
   isCheckingForUpdate.value = true
-}
-
-const aiProviderList = ref<AiProvider[]>()
-const aiProviderOptions = ref()
-const aiProviderSelectedKey = ref<string>()
-const aiProviderSelected = ref()
-const updateAiProvider = () => {
-  window.api.aiProvider.updateProvider(toRaw(aiProviderSelected.value)).then((data) => {
-    onMessage('info', data)
-  })
+  checkUpdateStatus.value = '检查中...'
 }
 
 const toggleDarkMode = ref('system')
@@ -92,6 +94,17 @@ const toggleDarkModeOptions = ref([
 const toggleDarkModeChange = (event) => {
   window.api.windowHandlers.toggleDarkMode(event.value)
 }
+
+const aiProviderList = ref<AiProvider[]>()
+const aiProviderOptions = ref()
+const aiProviderSelectedKey = ref<string>()
+const aiProviderSelected = ref()
+const updateAiProvider = () => {
+  window.api.aiProvider.updateProvider(toRaw(aiProviderSelected.value)).then((data) => {
+    onMessage('info', data)
+  })
+}
+
 onMounted(() => {
   window.api.store.getItem('windowHandlers').then((data) => {
     if (data.darkMode === 'dark') {
@@ -114,4 +127,4 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style scoped lang="scss"></style>

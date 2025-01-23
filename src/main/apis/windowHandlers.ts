@@ -8,7 +8,9 @@ export default () => {
       darkMode: 'system'
     })
   }
+
   const mainWindow = BrowserWindow.getAllWindows()[0]
+
   if (store.getItem('windowHandlers').isMainWindowMaximized) {
     mainWindow?.maximize()
     setTimeout(() => {
@@ -20,6 +22,7 @@ export default () => {
       mainWindow?.webContents.send('on-unmaximize')
     }, 1000)
   }
+
   // 窗口最大化
   ipcMain.on('toggle-window-maximize', () => {
     if (mainWindow?.isMaximized()) {
@@ -38,6 +41,7 @@ export default () => {
       })
     }
   })
+  // 窗口最大化事件
   mainWindow?.on('maximize', () => {
     mainWindow?.webContents.send('on-maximize')
     store.setItem('windowHandlers', {
@@ -45,6 +49,7 @@ export default () => {
       isMainWindowMaximized: true
     })
   })
+  // 窗口取消最大化事件
   mainWindow?.on('unmaximize', () => {
     mainWindow?.webContents.send('on-unmaximize')
     store.setItem('windowHandlers', {

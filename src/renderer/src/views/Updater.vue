@@ -33,11 +33,7 @@
       <template #content>
         <!-- 更新日志 -->
         <ScrollPanel v-if="!isDownloading" class="mt-2 h-32 rounded bg-gray-100 dark:bg-black">
-          <MdPreview
-            style="background: transparent !important"
-            :editorId="id"
-            :modelValue="releaseNotes"
-          ></MdPreview>
+          <MdPreview class="!bg-transparent" :editorId="id" :modelValue="releaseNotes"></MdPreview>
         </ScrollPanel>
         <!-- 下载进度 -->
         <div v-else-if="!isDownloaded" class="mt-2 h-32 flex flex-col justify-center">
@@ -97,8 +93,12 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import toggleDarkMode from '@renderer/utils/toggleDarkMode'
 import moment from 'moment'
+import { MdPreview } from 'md-editor-v3'
+import 'md-editor-v3/lib/preview.css'
 
+const id = 'preview-only'
 const isLoading = ref(true)
 const newVersion = ref()
 const releaseNotes = ref()
@@ -113,10 +113,6 @@ const downloadingTransferredBytes = ref(0)
 const isOnError = ref(false)
 const errorTitle = ref()
 const errorMessage = ref()
-
-import { MdPreview } from 'md-editor-v3'
-import 'md-editor-v3/lib/preview.css'
-const id = 'preview-only'
 
 const closeWindow = () => {
   window.api.windowHandlers.close()
@@ -159,8 +155,6 @@ const onUpdateInit = () => {
   })
 }
 
-import toggleDarkMode from '@renderer/utils/toggleDarkMode'
-
 onMounted(() => {
   window.api.store.getItem('windowHandlers').then((data) => {
     if (data.darkMode === 'dark') {
@@ -178,7 +172,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .md-editor-preview-wrapper {
   padding: 0.5rem;
 }

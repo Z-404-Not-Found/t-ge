@@ -4,9 +4,11 @@ import { join } from 'path'
 import { existsSync, mkdirSync } from 'fs'
 
 const userDataPath = join(app.getPath('userData'), './userData')
+
 if (!existsSync(userDataPath)) {
   mkdirSync(userDataPath)
 }
+
 export const db = new Database(join(userDataPath, 'chat.db'))
 
 export const sqliteInit = () => {
