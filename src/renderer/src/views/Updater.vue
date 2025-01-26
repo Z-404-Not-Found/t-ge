@@ -93,7 +93,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import toggleDarkMode from '@renderer/utils/toggleDarkMode'
 import moment from 'moment'
 import { MdPreview } from 'md-editor-v3'
 import 'md-editor-v3/lib/preview.css'
@@ -156,18 +155,6 @@ const onUpdateInit = () => {
 }
 
 onMounted(() => {
-  window.api.store.getItem('windowHandlers').then((data) => {
-    if (data.darkMode === 'dark') {
-      toggleDarkMode('dark')
-    } else if (data.darkMode === 'light') {
-      toggleDarkMode('light')
-    } else {
-      toggleDarkMode('system')
-    }
-  })
-  window.api.windowHandlers.onToggleDarkMode((_event, mode) => {
-    toggleDarkMode(mode)
-  })
   onUpdateInit()
 })
 </script>

@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @variant dark (&:where(.dark, .dark *));
+@plugin "tailwindcss-primeui";
 
 div::-webkit-scrollbar {
   width: 8px;

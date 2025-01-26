@@ -9,11 +9,20 @@
       @click="userCheckUpdate"
     ></Button>
     <SelectButton
-      v-model="toggleDarkMode"
+      v-model="toggleDarkModeModel"
       :options="toggleDarkModeOptions"
       optionLabel="name"
       optionValue="value"
+      :allowEmpty="false"
       @change="toggleDarkModeChange"
+    />
+    <SelectButton
+      v-model="toggleThemeModel"
+      :options="toggleThemeOptions"
+      optionLabel="name"
+      optionValue="value"
+      :allowEmpty="false"
+      @change="toggleThemeChange"
     />
     <div>
       <Select
@@ -48,6 +57,8 @@
 
 <script setup lang="ts">
 import { ref, inject, onMounted, toRaw } from 'vue'
+import toggleDarkMode from '@renderer/utils/toggleDarkMode'
+import toggleTheme from '@renderer/utils/toggleTheme'
 
 const onMessage = inject('onMessage') as (type: string, message: string) => void
 
@@ -76,7 +87,7 @@ const userCheckUpdate = () => {
   checkUpdateStatus.value = '检查中...'
 }
 
-const toggleDarkMode = ref('system')
+const toggleDarkModeModel = ref('system')
 const toggleDarkModeOptions = ref([
   {
     name: '跟随系统',
@@ -92,7 +103,30 @@ const toggleDarkModeOptions = ref([
   }
 ])
 const toggleDarkModeChange = (event) => {
-  window.api.windowHandlers.toggleDarkMode(event.value)
+  toggleDarkMode(event.value)
+}
+
+const toggleThemeModel = ref('Aura')
+const toggleThemeOptions = ref([
+  {
+    name: 'Aura',
+    value: 'Aura'
+  },
+  {
+    name: 'Nora',
+    value: 'Nora'
+  },
+  {
+    name: 'Lara',
+    value: 'Lara'
+  },
+  {
+    name: 'Material',
+    value: 'Material'
+  }
+])
+const toggleThemeChange = (event) => {
+  toggleTheme(event.value)
 }
 
 const aiProviderList = ref<AiProvider[]>()
@@ -106,15 +140,6 @@ const updateAiProvider = () => {
 }
 
 onMounted(() => {
-  window.api.store.getItem('windowHandlers').then((data) => {
-    if (data.darkMode === 'dark') {
-      toggleDarkMode.value = 'dark'
-    } else if (data.darkMode === 'light') {
-      toggleDarkMode.value = 'light'
-    } else {
-      toggleDarkMode.value = 'system'
-    }
-  })
   window.api.aiProvider.getProviders().then((data) => {
     aiProviderList.value = data
     aiProviderOptions.value = data.map((item) => {
@@ -123,6 +148,10 @@ onMounted(() => {
         key: item.key
       }
     })
+  })
+  window.api.store.getItem('theme').then((theme) => {
+    toggleDarkModeModel.value = theme.darkMode
+    toggleThemeModel.value = theme.theme
   })
 })
 </script>

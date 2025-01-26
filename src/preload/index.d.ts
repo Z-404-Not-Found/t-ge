@@ -77,20 +77,6 @@ declare global {
          * @returns void
          */
         close: () => void
-        /**
-         * 切换暗黑模式
-         * @param mode 模式，可选值：'dark' | 'light' | 'system'
-         * @returns void
-         */
-        toggleDarkMode: (mode: 'dark' | 'light' | 'system') => void
-        /**
-         * 监听暗黑模式切换
-         * @param listener 暗黑模式切换，回调参数类型为'dark' | 'light' | 'system'
-         * @returns void
-         */
-        onToggleDarkMode: (
-          listener: (event: IpcRendererEvent, mode: 'dark' | 'light' | 'system') => void
-        ) => void
       }
       /**
        * 更新相关接口
@@ -188,7 +174,7 @@ declare global {
          * @param value 值
          * @returns void
          */
-        setItem: (key: string, value: string) => void
+        setItem: (key: string, value) => void
         /**
          * 获取用户数据
          * @param key 键

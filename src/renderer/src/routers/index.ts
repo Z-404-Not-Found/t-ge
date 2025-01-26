@@ -12,12 +12,18 @@ const router = createRouter({
         {
           path: 'chat',
           name: 'chat',
-          component: () => import('@renderer/views/Chat.vue')
+          component: () => import('@renderer/views/Chat.vue'),
+          meta: {
+            title: '聊天'
+          }
         },
         {
           path: '/setting',
           name: 'setting',
-          component: () => import('@renderer/views/Setting.vue')
+          component: () => import('@renderer/views/Setting.vue'),
+          meta: {
+            title: '设置'
+          }
         }
       ]
     },

@@ -4561,6 +4561,11 @@ synckit@^0.9.1:
     "@pkgr/core" "^0.1.0"
     tslib "^2.6.2"
 
+tailwindcss-primeui@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.npmmirror.com/tailwindcss-primeui/-/tailwindcss-primeui-0.4.0.tgz#bfddbeb06a731168bf8dc981ddfdb68e0985d100"
+  integrity sha512-YYC7B7Yyzm1/4pEGgpf1ABAhbrKY++LuPoUamnKE7fTPO5Ct/Qr/dT+Uq2yiVhQnaW1zHQpYnThxfksaxhlDfQ==
+
 tailwindcss@4.0.0, tailwindcss@^4.0.0:
   version "4.0.0"
   resolved "https://registry.npmmirror.com/tailwindcss/-/tailwindcss-4.0.0.tgz#1f275ed16eb4127cb70bf5e9f53fb8eb7b72be3c"

@@ -65,14 +65,4 @@ export default () => {
   ipcMain.on('window-close', (event) => {
     BrowserWindow.fromWebContents(event.sender)?.close()
   })
-  // 切换暗黑模式
-  ipcMain.on('toggle-dark-mode', (_event, mode) => {
-    BrowserWindow.getAllWindows().forEach((win) => {
-      win.webContents.send('on-toggle-dark-mode', mode)
-    })
-    store.setItem('windowHandlers', {
-      ...store.getItem('windowHandlers'),
-      darkMode: mode
-    })
-  })
 }

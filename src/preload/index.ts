@@ -11,10 +11,7 @@ const api = {
     isMaximized: (listener: (event, data) => void) => ipcRenderer.on('on-maximize', listener),
     isUnmaximized: (listener: (event, data) => void) => ipcRenderer.on('on-unmaximize', listener),
     minimize: () => ipcRenderer.send('window-minimize'),
-    close: () => ipcRenderer.send('window-close'),
-    toggleDarkMode: (mode) => ipcRenderer.send('toggle-dark-mode', mode),
-    onToggleDarkMode: (listener: (event, mode) => void) =>
-      ipcRenderer.on('on-toggle-dark-mode', listener)
+    close: () => ipcRenderer.send('window-close')
   },
   update: {
     checkForUpdates: () => ipcRenderer.send('check-for-updates'),
