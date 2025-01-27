@@ -1,21 +1,23 @@
 <template>
-  <div class="h-full flex overflow-hidden">
-    <div class="h-full w-0 sm:w-20 lg:w-48 p-4 bg-primary-color">
-      <div
-        class="w-full h-12 flex justify-center items-center rounded-xl transition-all"
-        data-path="/chat"
-        @click="router.push('/chat')"
-      >
-        <i class="pi pi-comment"></i>
-        <span class="sm:hidden lg:block">聊天</span>
-      </div>
-      <div
-        class="w-full h-12 flex justify-center items-center rounded-xl transition-all"
-        data-path="/setting"
-        @click="router.push('/setting')"
-      >
-        <i class="pi pi-cog"></i>
-        <span class="sm:hidden lg:block">设置</span>
+  <div class="h-full flex overflow-hidden select-none">
+    <div class="h-full w-20 lg:w-48 hidden sm:block bg-surface-200 dark:bg-surface-700">
+      <div class="p-4 flex flex-col items-center gap-4">
+        <div
+          class="w-full h-12 hidden !border-0 sm:flex justify-center items-center rounded-xl p-button p-button-contrast p-button-text"
+          data-path="/chat"
+          @click="router.push('/chat')"
+        >
+          <i class="pi pi-comment !hidden sm:!block"></i>
+          <span class="hidden ml-4 lg:block">聊天</span>
+        </div>
+        <div
+          class="w-full h-12 hidden !border-0 sm:flex justify-center items-center rounded-xl p-button p-button-contrast p-button-text"
+          data-path="/setting"
+          @click="router.push('/setting')"
+        >
+          <i class="pi pi-cog !hidden sm:!block"></i>
+          <span class="hidden ml-4 lg:block">设置</span>
+        </div>
       </div>
     </div>
     <div class="flex-1 h-full flex flex-col">
@@ -50,6 +52,7 @@
               @click="toggleMaximized"
             ></Button>
             <Button
+              class="hover:!text-white"
               icon="pi pi-times"
               size="small"
               variant="text"
@@ -179,7 +182,9 @@ const checkError = () => {
   window.api.openLogFile()
 }
 
-watch(router.currentRoute, (to) => {
+watch(router.currentRoute, (to, from) => {
+  document.querySelector(`div[data-path='${from.path}']`)?.classList.add('p-button-text')
+  document.querySelector(`div[data-path='${to.path}']`)?.classList.remove('p-button-text')
   title.value = to.meta.title as string
 })
 
@@ -197,6 +202,7 @@ onMounted(() => {
       detail
     })
   })
+  document.querySelector("div[data-path='/chat']")?.classList.remove('p-button-text')
   checkUpdate()
 })
 </script>

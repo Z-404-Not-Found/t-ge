@@ -6,6 +6,7 @@
       :icon="checkUpdateInfo"
       :label="checkUpdateStatus"
       :loading="isCheckingForUpdate"
+      severity="contrast"
       @click="userCheckUpdate"
     ></Button>
     <SelectButton

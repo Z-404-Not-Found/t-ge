@@ -27,7 +27,5 @@ if (!(await window.api.store.getItem('theme'))) {
   })
 }
 
-window.api.store.getItem('theme').then(async (theme) => {
-  await toggleDarkMode(theme.darkMode)
-  await toggleTheme(theme.theme)
-})
+await toggleDarkMode((await window.api.store.getItem('theme')).darkMode)
+await toggleTheme((await window.api.store.getItem('theme')).theme)
