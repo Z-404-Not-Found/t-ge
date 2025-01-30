@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full w-full overflow-y-auto p-4">
+  <div class="h-full w-full overflow-y-auto">
     <div class="py-2">
       <div>聊天测试</div>
       <InputText v-model="message" placeholder="输入聊天内容"></InputText>

@@ -27,11 +27,21 @@ const api = {
   ai: {
     chat: {
       send: (messages) => ipcRenderer.send('on-chat-send', messages),
-      onStream: (listener: (event, data) => void) => ipcRenderer.on('on-chat-stream', listener),
-      onStreamEnd: (listener: (event, data) => void) =>
-        ipcRenderer.on('on-chat-stream-end', listener),
-      onStreamError: (listener: (event, data) => void) =>
-        ipcRenderer.on('on-chat-stream-error', listener)
+      onStream: (listener: (event, data) => void) => {
+        if (ipcRenderer.listenerCount('on-chat-stream') === 0) {
+          ipcRenderer.on('on-chat-stream', listener)
+        }
+      },
+      onStreamEnd: (listener: (event, data) => void) => {
+        if (ipcRenderer.listenerCount('on-chat-stream-end') === 0) {
+          ipcRenderer.on('on-chat-stream-end', listener)
+        }
+      },
+      onStreamError: (listener: (event, data) => void) => {
+        if (ipcRenderer.listenerCount('on-chat-stream-error') === 0) {
+          ipcRenderer.on('on-chat-stream-error', listener)
+        }
+      }
     }
   },
   sqlite: {

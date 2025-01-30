@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div>Setting</div>
     <Button
       class="mr-4"
       :icon="checkUpdateInfo"
@@ -61,7 +60,11 @@ import { ref, inject, onMounted, toRaw } from 'vue'
 import toggleDarkMode from '@renderer/utils/toggleDarkMode'
 import toggleTheme from '@renderer/utils/toggleTheme'
 
-const onMessage = inject('onMessage') as (type: string, message: string) => void
+const onMessage = inject('onMessage') as (data: {
+  severity: 'error' | 'success' | 'secondary' | 'info' | 'warn' | 'contrast'
+  summary: string
+  detail: string
+}) => void
 
 const isNoAvailableUpdate = ref(false)
 const isCheckingForUpdate = ref(false)
@@ -136,7 +139,11 @@ const aiProviderSelectedKey = ref<string>()
 const aiProviderSelected = ref()
 const updateAiProvider = () => {
   window.api.aiProvider.updateProvider(toRaw(aiProviderSelected.value)).then((data) => {
-    onMessage('info', data)
+    onMessage({
+      severity: 'success',
+      summary: data,
+      detail: '更新成功'
+    })
   })
 }
 

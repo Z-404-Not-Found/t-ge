@@ -17,6 +17,10 @@ if (store.getItem('aiProviders').length < aiProviders.length) {
   store.setItem('aiProviders', existingAiProviders)
 }
 
+if (store.getItem('currentAiProvider')) {
+  chatInit(store.getItem('currentAiProvider'))
+}
+
 export default () => {
   ipcMain.handle('ai-provider-update', (_event, aIProvider: AiProvider) => {
     chatInit(aIProvider)
