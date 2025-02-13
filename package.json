@@ -1,6 +1,6 @@
 {
   "name": "t-ge",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "t哥是一款支持与chatGPT等大语言模型聊天的桌面应用",
   "main": "./out/main/index.js",
   "author": "Sure Zhang<Zhsh_404-NotFound_P@outlook.com>",
