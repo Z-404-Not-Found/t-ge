@@ -24,3 +24,11 @@ interface AiProvider {
     accessKey?: string
   }
 }
+
+interface AiProviderRequiredValues {
+  baseURL: string
+  model: string
+  apiKey?: string
+  secretKey?: string
+  accessKey?: string
+}

@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import store from '../utils/store'
-import { aiProviders } from '../../configs/aiProviders'
-import chatInit from './chat'
+import { aiProviders } from '../../configs/existingAiProviders'
+import aiInit from '../utils/aiInit'
 
 if (!store.getItem('currentAiProvider')) {
   store.setItem('aiProviders', aiProviders)
@@ -18,12 +18,11 @@ if (store.getItem('aiProviders').length < aiProviders.length) {
 }
 
 if (store.getItem('currentAiProvider')) {
-  chatInit(store.getItem('currentAiProvider'))
+  aiInit(store.getItem('currentAiProvider'))
 }
 
 export default () => {
   ipcMain.handle('ai-provider-update', (_event, aIProvider: AiProvider) => {
-    chatInit(aIProvider)
     store.setItem('currentAiProvider', aIProvider)
     const existingAiProviders = store.getItem('aiProviders')
     existingAiProviders.forEach((item, index, arr) => {
@@ -32,6 +31,7 @@ export default () => {
       }
     })
     store.setItem('aiProviders', existingAiProviders)
+    aiInit(store.getItem('currentAiProvider'))
     return 'Update Success'
   })
   ipcMain.handle('ai-provider-get', () => {

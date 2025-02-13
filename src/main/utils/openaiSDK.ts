@@ -22,16 +22,24 @@ const chatInit = (openai: OpenAI, model: string) => {
         }
       })
       .catch((error) => {
-        logger.error('openai SDK API Error: ' + error)
+        logger.error('openai SDK chat API Error: ' + error)
         event.sender.send('on-chat-stream-error', error)
       })
   })
 }
 
-export default (baseURL: string, apiKey: string, model: string) => {
-  const openai = new OpenAI({
-    apiKey: apiKey,
-    baseURL: baseURL
+const getModelListInit = (openai: OpenAI) => {
+  ipcMain.removeHandler('get-model-list')
+  ipcMain.handle('get-model-list', async () => {
+    return (await openai.models.list()).data
   })
-  chatInit(openai, model)
+}
+
+export default (aiProviderRequiredValues: AiProviderRequiredValues) => {
+  const openai = new OpenAI({
+    apiKey: aiProviderRequiredValues.apiKey,
+    baseURL: aiProviderRequiredValues.baseURL
+  })
+  chatInit(openai, aiProviderRequiredValues.model)
+  getModelListInit(openai)
 }

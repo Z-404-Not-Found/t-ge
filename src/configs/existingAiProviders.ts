@@ -32,17 +32,17 @@ export const aiProviders: AiProvider[] = [
       model: 'qwen-turbo'
     }
   },
-  {
-    name: '文心一言',
-    key: 'ernie',
-    supportsOpenAI: false,
-    requiredValues: {
-      baseURL: 'baseURL',
-      accessKey: 'your-accessKey',
-      secretKey: 'your-secretKey',
-      model: 'ernie-bot-turbo'
-    }
-  },
+  // {
+  //   name: '文心一言',
+  //   key: 'ernie',
+  //   supportsOpenAI: false,
+  //   requiredValues: {
+  //     baseURL: 'baseURL',
+  //     accessKey: 'your-accessKey',
+  //     secretKey: 'your-secretKey',
+  //     model: 'ernie-bot-turbo'
+  //   }
+  // },
   {
     name: 'deepseek深度求索',
     key: 'deepseek',

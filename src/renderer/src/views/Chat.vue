@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, inject } from 'vue'
+import { ref, onMounted, inject, onUnmounted } from 'vue'
 
 const onMessage = inject('onMessage') as (type: string, message: string) => void
 
@@ -57,6 +57,10 @@ onMounted(() => {
     isError.value = true
     errorMessage.value = data
   })
+})
+
+onUnmounted(() => {
+  window.api.ai.chat.offStream()
 })
 </script>
 

@@ -16,11 +16,9 @@ div::-webkit-scrollbar-track {
   border-radius: 4px;
 }
 
-@media (prefers-color-scheme: dark) {
-  div::-webkit-scrollbar-thumb {
+  .dark div::-webkit-scrollbar-thumb {
     background-color: #555;
   }
-  div::-webkit-scrollbar-track {
+  .dark div::-webkit-scrollbar-track {
     background-color: #333;
   }
-}

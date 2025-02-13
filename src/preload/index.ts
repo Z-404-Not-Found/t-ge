@@ -28,21 +28,21 @@ const api = {
     chat: {
       send: (messages) => ipcRenderer.send('on-chat-send', messages),
       onStream: (listener: (event, data) => void) => {
-        if (ipcRenderer.listenerCount('on-chat-stream') === 0) {
-          ipcRenderer.on('on-chat-stream', listener)
-        }
+        ipcRenderer.on('on-chat-stream', listener)
       },
       onStreamEnd: (listener: (event, data) => void) => {
-        if (ipcRenderer.listenerCount('on-chat-stream-end') === 0) {
-          ipcRenderer.on('on-chat-stream-end', listener)
-        }
+        ipcRenderer.on('on-chat-stream-end', listener)
       },
       onStreamError: (listener: (event, data) => void) => {
-        if (ipcRenderer.listenerCount('on-chat-stream-error') === 0) {
-          ipcRenderer.on('on-chat-stream-error', listener)
-        }
+        ipcRenderer.on('on-chat-stream-error', listener)
+      },
+      offStream: () => {
+        ipcRenderer.removeAllListeners('on-chat-stream')
+        ipcRenderer.removeAllListeners('on-chat-stream-end')
+        ipcRenderer.removeAllListeners('on-chat-stream-error')
       }
-    }
+    },
+    getModelList: async () => await ipcRenderer.invoke('get-model-list')
   },
   sqlite: {
     insertTest: async (data) => await ipcRenderer.invoke('insert-test', data),
@@ -53,7 +53,8 @@ const api = {
     getItem: async (key) => await ipcRenderer.invoke('user-data-getItem', key),
     removeItem: (key) => ipcRenderer.send('user-data-removeItem', key),
     clear: () => ipcRenderer.send('user-data-clear')
-  }
+  },
+  openGithub: () => ipcRenderer.send('open-github')
 }
 
 // 仅当启用上下文隔离时，使用 `contextBridge` API 将 Electron API 暴露给渲染器，

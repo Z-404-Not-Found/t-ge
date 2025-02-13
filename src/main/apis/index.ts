@@ -3,6 +3,7 @@ import updaterInit from './update'
 import sqliteInit from './sqlite'
 import storeInit from './store'
 import aiProviderInit from './aiProvider'
+import openGithub from './openGithub'
 
 export default () => {
   windowHandlersInit()
@@ -10,4 +11,5 @@ export default () => {
   sqliteInit()
   storeInit()
   aiProviderInit()
+  openGithub()
 }

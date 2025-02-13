@@ -161,7 +161,17 @@ declare global {
            * @returns void
            */
           onStreamError: (listener: (event: IpcRendererEvent, data: string) => void) => void
+          /**
+           * 移除消息接收事件
+           * @returns void
+           */
+          offStream: () => void
         }
+        /**
+         * 获取模型列表
+         * @returns Promise
+         */
+        getModelList: () => Promise<[]>
       }
       sqlite: {
         insertTest: (data: string) => Promise<void>
@@ -193,6 +203,11 @@ declare global {
          */
         clear: () => void
       }
+      /**
+       * 打开Github
+       * @returns void
+       */
+      openGithub: () => void
     }
   }
 }

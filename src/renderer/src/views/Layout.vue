@@ -2,7 +2,7 @@
   <div class="h-full flex overflow-hidden select-none p-4">
     <div
       id="sidebar"
-      class="h-full w-20 rounded-xl transition-all lg:w-48 hidden sm:block bg-surface-100 dark:bg-surface-900"
+      class="h-full w-20 p-fieldset !p-0 transition-all lg:w-48 hidden sm:block !bg-surface-100 dark:!bg-surface-900"
     >
       <div class="p-4 flex flex-col items-center gap-4">
         <div class="w-full h-12 hidden !border-0 sm:flex justify-center items-center rounded-xl">
@@ -112,17 +112,28 @@
       </template>
     </Drawer>
     <!-- 全局消息 -->
-    <Toast v-if="!isOnError" class="mt-8" />
-    <Toast v-else class="mt-8" @close="isOnError = false">
+    <Toast class="mt-8">
       <template #message="slotProps">
         <div class="flex flex-1">
-          <i class="pi pi-times-circle"></i>
+          <i
+            :class="
+              slotProps.message.severity === 'error'
+                ? 'pi pi-times-circle'
+                : slotProps.message.severity === 'success'
+                  ? 'pi pi-check'
+                  : slotProps.message.severity === 'info'
+                    ? 'pi pi-info-circle'
+                    : slotProps.message.severity === 'warn'
+                      ? 'pi pi-exclamation-triangle'
+                      : ''
+            "
+          ></i>
           <div class="ml-2 text-sm">
             <div class="text-sm">{{ slotProps.message.summary }}</div>
             <div class="text-xs mt-2">
               {{ slotProps.message.detail }}
             </div>
-            <div class="flex justify-end mt-2">
+            <div v-if="slotProps.message.severity === 'error'" class="flex justify-end mt-2">
               <Button
                 severity="danger"
                 size="small"
@@ -138,7 +149,6 @@
                 @click="
                   () => {
                     toast.remove(slotProps.message)
-                    isOnError = false
                   }
                 "
               />
@@ -154,6 +164,7 @@
 import { ref, onMounted, provide, watch } from 'vue'
 import router from '@renderer/routers'
 import { useToast } from 'primevue/usetoast'
+import logger from '@renderer/utils/logger'
 
 const toast = useToast()
 
@@ -180,7 +191,6 @@ const checkUpdate = () => {
 }
 
 const isOnMessage = ref(false)
-const isOnError = ref(false)
 
 const onMessage = (data: {
   severity: 'error' | 'success' | 'secondary' | 'info' | 'warn' | 'contrast'
@@ -188,12 +198,13 @@ const onMessage = (data: {
   detail: string
 }) => {
   if (data.severity === 'error') {
-    isOnError.value = true
+    logger.error(data.detail)
     setTimeout(() => {
       toast.add({
         severity: data.severity,
         summary: data.summary,
-        detail: data.detail
+        detail: data.detail,
+        life: 3000
       })
     }, 1)
   } else {

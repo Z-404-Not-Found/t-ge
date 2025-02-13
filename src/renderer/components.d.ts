@@ -11,6 +11,7 @@ declare module 'vue' {
     Card: typeof import('primevue/card')['default']
     Divider: typeof import('primevue/divider')['default']
     Drawer: typeof import('primevue/drawer')['default']
+    Fieldset: typeof import('primevue/fieldset')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Panel: typeof import('primevue/panel')['default']
     ProgressBar: typeof import('primevue/progressbar')['default']
