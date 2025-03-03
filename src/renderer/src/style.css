@@ -2,23 +2,53 @@
 @variant dark (&:where(.dark, .dark *));
 @plugin "tailwindcss-primeui";
 
-div::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 8px;
 }
 
-div::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background-color: #757575;
-  border-radius: 4px;
+  border-radius: var(--p-panel-border-radius);
 }
 
-div::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
   background-color: #ededed;
-  border-radius: 4px;
+  border-radius: var(--p-panel-border-radius);
 }
 
-.dark div::-webkit-scrollbar-thumb {
+.scroll-transparent::-webkit-scrollbar {
+  width: 0;
+}
+
+.scroll-transparent::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.scroll-transparent::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.dark *::-webkit-scrollbar-thumb {
   background-color: #555;
 }
-.dark div::-webkit-scrollbar-track {
+.dark *::-webkit-scrollbar-track {
   background-color: #333;
+}
+
+.dark .p-fieldset {
+  background: #121212;
+}
+
+.dark .p-fieldset-legend {
+  background: #121212;
+}
+
+.dark .p-panel {
+  background: #121212;
+}
+
+.single-line {
+  overflow: hidden; /* 超出部分隐藏 */
+  white-space: nowrap; /* 文本不换行 */
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
 }

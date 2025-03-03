@@ -1,41 +1,82 @@
 <template>
-  <div class="h-full flex overflow-hidden select-none p-4">
+  <div class="h-full w-full flex overflow-hidden select-none p-4">
     <div
       id="sidebar"
-      class="h-full w-20 p-fieldset !p-0 transition-all lg:w-48 hidden sm:block !bg-surface-100 dark:!bg-surface-900"
+      :class="
+        'h-full w-20 rounded-[var(--p-panel-border-radius)] !p-0 transition-all xl:w-52 hidden sm:block !bg-surface-100 dark:!bg-surface-900' +
+        (sideBarShrink ? ' !w-20' : '')
+      "
     >
-      <div class="p-4 flex flex-col items-center gap-4">
+      <div class="p-4 flex flex-col h-full items-center gap-4">
         <div class="w-full h-12 hidden !border-0 sm:flex justify-center items-center rounded-xl">
           <img class="w-10 h-10" src="../assets/icon.png" />
-          <div class="ml-4 text-2xl font-semibold hidden lg:block">t哥</div>
+          <div
+            :class="
+              'ml-4 text-2xl font-semibold hidden xl:block' + (sideBarShrink ? ' !hidden' : '')
+            "
+          >
+            t哥
+          </div>
         </div>
         <Divider class="!my-0" />
-        <div
-          v-tooltip="'聊天'"
-          class="w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast p-button-text"
-          data-path="/chat"
-          @click="router.push('/chat')"
-        >
-          <i class="pi pi-comment !hidden sm:!block"></i>
-          <span class="hidden ml-4 lg:block">聊天</span>
-        </div>
-        <div
-          v-tooltip="'设置'"
-          class="w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast p-button-text"
-          data-path="/setting"
-          @click="router.push('/setting')"
-        >
-          <i class="pi pi-cog !hidden sm:!block"></i>
-          <span class="hidden ml-4 lg:block">设置</span>
+        <div class="flex-1 w-full flex flex-col justify-between">
+          <div class="flex flex-col w-full gap-4">
+            <div
+              v-tooltip="'聊天'"
+              :class="
+                'w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast' +
+                (activateSidebar === '/chat' ? '' : ' p-button-text')
+              "
+              @click="changeActiveSidebar('/chat', '聊天')"
+            >
+              <i class="pi pi-comment !hidden sm:!block"></i>
+              <span :class="'hidden ml-4 xl:block' + (sideBarShrink ? ' !hidden' : '')">聊天</span>
+            </div>
+            <div
+              v-tooltip="'角色'"
+              :class="
+                'w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast' +
+                (activateSidebar === '/role' ? '' : ' p-button-text')
+              "
+              @click="changeActiveSidebar('/role', '角色')"
+            >
+              <i class="pi pi-user !hidden sm:!block"></i>
+              <span :class="'hidden ml-4 xl:block' + (sideBarShrink ? ' !hidden' : '')">角色</span>
+            </div>
+          </div>
+          <div class="flex flex-col w-full gap-4">
+            <div
+              v-tooltip="'设置'"
+              :class="
+                'w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast' +
+                (activateSidebar === '/setting' ? '' : ' p-button-text')
+              "
+              @click="changeActiveSidebar('/setting', '设置')"
+            >
+              <i class="pi pi-cog !hidden sm:!block"></i>
+              <span :class="'hidden ml-4 xl:block' + (sideBarShrink ? ' !hidden' : '')">设置</span>
+            </div>
+            <Divider class="!my-0 !hidden xl:!block" />
+            <div
+              v-tooltip="'展开/收缩侧边栏'"
+              class="w-full h-12 !border-0 !hidden xl:!flex rounded-xl p-button p-button-contrast p-button-text"
+              @click="toggleSideBarBut"
+            >
+              <i
+                :class="
+                  'pi !hidden sm:!block' + (sideBarShrink ? ' pi-angle-right' : ' pi-angle-left')
+                "
+              ></i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="flex-1 h-full flex flex-col">
-      <div class="w-full h-20 flex flex-col">
+      <div class="w-full h-8 flex flex-col">
         <div class="w-full flex-1 flex justify-end">
           <Button
-            class="sm:!hidden ml-1"
-            size="large"
+            class="sm:!hidden"
             icon="pi pi-bars"
             severity="contrast"
             variant="text"
@@ -66,11 +107,8 @@
             ></Button>
           </div>
         </div>
-        <div class="ml-4 text-2xl font-semibold">
-          {{ title }}
-        </div>
       </div>
-      <div class="flex-1 px-4 pt-4 overflow-hidden">
+      <div class="flex-1 sm:pl-4 pt-4 overflow-hidden">
         <RouterView />
       </div>
     </div>
@@ -83,11 +121,13 @@
           </div>
           <Divider class="!my-0" />
           <div
-            class="w-full h-12 !border-0 flex rounded-xl p-button p-button-contrast p-button-text"
-            data-path="/chat"
+            :class="
+              'w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast' +
+              (activateSidebar === '/chat' ? '' : ' p-button-text')
+            "
             @click="
               () => {
-                router.push('/chat')
+                changeActiveSidebar('/chat', '聊天')
                 toggleSideBar()
               }
             "
@@ -96,11 +136,28 @@
             <span class="ml-4 block">聊天</span>
           </div>
           <div
-            class="w-full h-12 !border-0 flex rounded-xl p-button p-button-contrast p-button-text"
-            data-path="/setting"
+            :class="
+              'w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast' +
+              (activateSidebar === '/role' ? '' : ' p-button-text')
+            "
             @click="
               () => {
-                router.push('/setting')
+                changeActiveSidebar('/role', '角色')
+                toggleSideBar()
+              }
+            "
+          >
+            <i class="pi pi-user sm:!block"></i>
+            <span class="ml-4 lg:block">角色</span>
+          </div>
+          <div
+            :class="
+              'w-full h-12 !border-0 sm:flex rounded-xl p-button p-button-contrast' +
+              (activateSidebar === '/setting' ? '' : ' p-button-text')
+            "
+            @click="
+              () => {
+                changeActiveSidebar('/setting', '设置')
                 toggleSideBar()
               }
             "
@@ -157,14 +214,14 @@
         </div>
       </template>
     </Toast>
+    <Panel class="hidden"></Panel>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, provide, watch } from 'vue'
+import { ref, onMounted, provide } from 'vue'
 import router from '@renderer/routers'
 import { useToast } from 'primevue/usetoast'
-import logger from '@renderer/utils/logger'
 
 const toast = useToast()
 
@@ -172,7 +229,7 @@ const maximizedIcon = ref('pi pi-window-maximize')
 
 const sideBarVisible = ref(false)
 
-const title = ref('聊天')
+const currentTitle = ref('聊天')
 
 const minimizeWindow = () => {
   window.api.windowHandlers.minimize()
@@ -198,13 +255,12 @@ const onMessage = (data: {
   detail: string
 }) => {
   if (data.severity === 'error') {
-    logger.error(data.detail)
     setTimeout(() => {
       toast.add({
         severity: data.severity,
         summary: data.summary,
         detail: data.detail,
-        life: 3000
+        life: 5000
       })
     }, 1)
   } else {
@@ -235,18 +291,22 @@ const toggleSideBar = () => {
   }, 100)
 }
 
-watch(router.currentRoute, (to, from) => {
-  document.querySelectorAll(`div[data-path='${to.path}']`)?.forEach((element) => {
-    element.classList.remove('p-button-text')
-  })
-  document.querySelectorAll(`div[data-path='${from.path}']`)?.forEach((element) => {
-    element.classList.add('p-button-text')
-  })
-  title.value = to.meta.title as string
-})
+const activateSidebar = ref()
+
+const changeActiveSidebar = (path: string, title: string) => {
+  router.push(path)
+  activateSidebar.value = path
+  currentTitle.value = title
+}
+
+const sideBarShrink = ref(false)
+
+const toggleSideBarBut = () => {
+  sideBarShrink.value = !sideBarShrink.value
+}
 
 onMounted(() => {
-  router.push('/chat')
+  changeActiveSidebar('/chat', '聊天')
   window.api.windowHandlers.isMaximized(() => {
     maximizedIcon.value = 'pi pi-window-minimize'
   })
@@ -260,7 +320,6 @@ onMounted(() => {
       detail
     })
   })
-  document.querySelector("div[data-path='/chat']")?.classList.toggle('p-button-text')
   checkUpdate()
 })
 </script>

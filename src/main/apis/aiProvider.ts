@@ -40,4 +40,14 @@ export default () => {
   ipcMain.handle('ai-provider-get-current', () => {
     return store.getItem('currentAiProvider')
   })
+  ipcMain.handle('ai-provider-update-model', (_event, model) => {
+    store.setItem('currentAiProvider', {
+      ...store.getItem('currentAiProvider'),
+      requiredValues: {
+        ...store.getItem('currentAiProvider').requiredValues,
+        model
+      }
+    })
+    return '模型已切换为' + model
+  })
 }

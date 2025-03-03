@@ -5,26 +5,32 @@ import logger from '../utils/logger'
 const chatInit = (openai: OpenAI, model: string) => {
   ipcMain.removeAllListeners('on-chat-send')
   ipcMain.on('on-chat-send', async (event, messages) => {
-    await openai.chat.completions
-      .create({
+    try {
+      const completion = await openai.chat.completions.create({
         messages: messages,
         model: model,
         stream: true
       })
-      .then(async (completion) => {
-        for await (const part of completion) {
-          if (part.choices[0].delta.content) {
-            event.sender.send('on-chat-stream', part.choices[0].delta.content)
-          }
-          if (part.choices[0].finish_reason === 'stop') {
-            event.sender.send('on-chat-stream-end')
-          }
+      ipcMain.removeAllListeners('stop-chat-stream')
+      ipcMain.on('stop-chat-stream', () => {
+        completion.controller.abort()
+      })
+      for await (const chunk of completion) {
+        // @ts-ignore openai包的问题，delta.reasoning_content是可选的
+        if (chunk.choices[0].delta.reasoning_content) {
+          // @ts-ignore openai包的问题，delta.reasoning_content是可选的
+          event.sender.send('on-chat-reasoning-stream', chunk.choices[0].delta.reasoning_content)
+        } else if (chunk.choices[0].delta.content !== null) {
+          event.sender.send('on-chat-stream', chunk.choices[0].delta.content)
         }
-      })
-      .catch((error) => {
-        logger.error('openai SDK chat API Error: ' + error)
-        event.sender.send('on-chat-stream-error', error)
-      })
+        if (chunk.choices[0].finish_reason === 'stop') {
+          event.sender.send('on-chat-stream-end')
+        }
+      }
+    } catch (error) {
+      event.sender.send('on-chat-stream-error', error)
+      logger.error('openai SDK chat API Error: ' + error)
+    }
   })
 }
 

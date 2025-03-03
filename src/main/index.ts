@@ -11,7 +11,7 @@ import apiInit from './apis/index'
 function createWindow(): void {
   // 创建浏览器窗口
   const mainWindow = new BrowserWindow({
-    width: 900,
+    width: 1080,
     height: 670,
     minWidth: 540,
     minHeight: 600,

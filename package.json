@@ -1,6 +1,6 @@
 {
   "name": "t-ge",
-  "version": "0.0.6",
+  "version": "1.0.0",
   "description": "t哥是一款支持与chatGPT等大语言模型聊天的桌面应用",
   "main": "./out/main/index.js",
   "author": "Sure Zhang<Zhsh_404-NotFound_P@outlook.com>",
@@ -25,7 +25,7 @@
     "better-sqlite3": "^11.7.0",
     "electron-log": "^5.2.4",
     "electron-updater": "^6.1.7",
-    "openai": "^4.79.1"
+    "openai": "^4.86.1"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",
@@ -44,6 +44,7 @@
     "electron-vite": "^2.3.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vue": "^9.26.0",
+    "html2canvas": "^1.4.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.11",
     "md-editor-v3": "^5.2.1",

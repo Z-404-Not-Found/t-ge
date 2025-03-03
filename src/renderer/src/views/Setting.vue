@@ -108,7 +108,7 @@
                 optionValue="key"
                 placeholder="AI Model"
                 :loading="isGettingModelList"
-                @focus="getModelList"
+                @focus="focusModelListSelect"
               ></Select>
             </div>
             <div v-else>
@@ -120,6 +120,27 @@
           </div>
         </div>
       </div>
+    </Fieldset>
+    <Fieldset legend="对话参数">
+      <div class="flex justify-between">
+        <div class="flex-1">
+          <div class="font-black">上下文长度</div>
+          <div class="text-sm text-gray-500">
+            每次对话一同发送的历史消息数，次参数会影响对话的记忆长度
+          </div>
+        </div>
+        <div>
+          <InputNumber
+            v-model="rememberContextLength"
+            showButtons
+            :min="1"
+            :max="32"
+            fluid
+            @update:modelValue="setRememberContextLength"
+          />
+        </div>
+      </div>
+      <!-- <Divider /> -->
     </Fieldset>
     <Fieldset legend="关于">
       <div class="flex justify-between">
@@ -138,7 +159,6 @@
         </div>
       </div>
       <Divider />
-      <!-- github -->
       <div class="flex justify-between">
         <div class="flex-1">
           <div class="font-black">GitHub</div>
@@ -255,6 +275,18 @@ const changeProvider = async () => {
 }
 
 const updateAiProvider = async () => {
+  if (
+    !aiProviderSelected.value.requiredValues.baseURL.endsWith('/v1') &&
+    aiProviderSelected.value.supportsOpenAI
+  ) {
+    if (aiProviderSelected.value.requiredValues.baseURL.endsWith('/')) {
+      aiProviderSelected.value.requiredValues.baseURL =
+        aiProviderSelected.value.requiredValues.baseURL + 'v1'
+    } else {
+      aiProviderSelected.value.requiredValues.baseURL =
+        aiProviderSelected.value.requiredValues.baseURL + '/v1'
+    }
+  }
   await window.api.aiProvider.updateProvider(toRaw(aiProviderSelected.value)).then((data) => {
     onMessage({
       severity: 'success',
@@ -309,7 +341,26 @@ const getModelList = () => {
   }
 }
 
-onMounted(() => {
+const focusModelListSelect = async () => {
+  if (
+    !aiProviderSelected.value.requiredValues.baseURL.endsWith('/v1') &&
+    aiProviderSelected.value.supportsOpenAI
+  ) {
+    aiProviderSelected.value.requiredValues.baseURL =
+      aiProviderSelected.value.requiredValues.baseURL + '/v1'
+  }
+  aiProviderModelOptions.value = []
+  await window.api.aiProvider.updateProvider(toRaw(aiProviderSelected.value))
+  getModelList()
+}
+
+const rememberContextLength = ref()
+
+const setRememberContextLength = () => {
+  window.api.store.setItem('rememberContextLength', rememberContextLength.value)
+}
+
+onMounted(async () => {
   window.api.aiProvider.getProviders().then((data) => {
     aiProviderList.value = data
     aiProviderOptions.value = data.map((item) => {
@@ -320,7 +371,7 @@ onMounted(() => {
     })
   })
   window.api.aiProvider.getCurrentProvider().then((data) => {
-    aiProviderSelectedKey.value = data.key
+    aiProviderSelectedKey.value = data?.key
     aiProviderSelected.value = data
     if (data) {
       getModelList()
@@ -330,6 +381,7 @@ onMounted(() => {
     toggleDarkModeModel.value = theme.darkMode
     toggleThemeModel.value = theme.theme
   })
+  rememberContextLength.value = await window.api.store.getItem('rememberContextLength')
 })
 </script>
 

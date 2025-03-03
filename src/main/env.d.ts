@@ -16,6 +16,7 @@ interface AiProvider {
   name: string
   key: string
   supportsOpenAI: boolean
+  icon: string
   requiredValues: {
     baseURL: string
     model: string

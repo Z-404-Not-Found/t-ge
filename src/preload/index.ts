@@ -22,7 +22,9 @@ const api = {
   aiProvider: {
     getProviders: async () => await ipcRenderer.invoke('ai-provider-get'),
     getCurrentProvider: async () => await ipcRenderer.invoke('ai-provider-get-current'),
-    updateProvider: async (provider) => await ipcRenderer.invoke('ai-provider-update', provider)
+    updateProvider: async (provider) => await ipcRenderer.invoke('ai-provider-update', provider),
+    updateProviderModel: async (model) =>
+      await ipcRenderer.invoke('ai-provider-update-model', model)
   },
   ai: {
     chat: {
@@ -30,8 +32,14 @@ const api = {
       onStream: (listener: (event, data) => void) => {
         ipcRenderer.on('on-chat-stream', listener)
       },
+      onReasoningStream: (listener: (event, data) => void) => {
+        ipcRenderer.on('on-chat-reasoning-stream', listener)
+      },
       onStreamEnd: (listener: (event, data) => void) => {
         ipcRenderer.on('on-chat-stream-end', listener)
+      },
+      stopChatStream: () => {
+        ipcRenderer.send('stop-chat-stream')
       },
       onStreamError: (listener: (event, data) => void) => {
         ipcRenderer.on('on-chat-stream-error', listener)
@@ -54,7 +62,49 @@ const api = {
     removeItem: (key) => ipcRenderer.send('user-data-removeItem', key),
     clear: () => ipcRenderer.send('user-data-clear')
   },
-  openGithub: () => ipcRenderer.send('open-github')
+  openGithub: () => ipcRenderer.send('open-github'),
+  conversation: {
+    add: (roleId) => ipcRenderer.invoke('add-conversation', roleId),
+    updateTitle: ({ id, title }) => ipcRenderer.invoke('update-conversation-title', { id, title }),
+    get: (roleId) => ipcRenderer.invoke('get-conversation', roleId),
+    updateUpdatedAtById: ({ id, updated_at }) =>
+      ipcRenderer.invoke('update-conversation-updated-at-by-id', { id, updated_at }),
+    delete: (id) => ipcRenderer.invoke('delete-conversation', id)
+  },
+  role: {
+    add: ({ name, description, definition }) =>
+      ipcRenderer.invoke('add-role', { name, description, definition }),
+    delete: (id) => ipcRenderer.invoke('delete-role', id),
+    get: () => ipcRenderer.invoke('get-role'),
+    update: ({ id, name, description, definition }) =>
+      ipcRenderer.invoke('update-role', { id, name, description, definition }),
+    updateUpdatedAtById: ({ id, updated_at }) =>
+      ipcRenderer.invoke('update-role-updated-at-by-id', { id, updated_at }),
+    getRoleByName: (name) => ipcRenderer.invoke('get-role-by-name', name)
+  },
+  message: {
+    addMessage: ({ conversationId, content, reasoningContent, type, senderRole, isReasoning }) =>
+      ipcRenderer.invoke('add-message', {
+        conversationId,
+        content,
+        reasoningContent,
+        type,
+        senderRole,
+        isReasoning
+      }),
+    updateMessageById: ({ messageId, content }) =>
+      ipcRenderer.invoke('update-message-by-id', { messageId, content }),
+    updateReasoningMessageById: ({ messageId, reasoningContent }) =>
+      ipcRenderer.invoke('update-reasoning-message-by-id', { messageId, reasoningContent }),
+    deleteMessagesById: (id) => ipcRenderer.invoke('delete-messages-by-id', id),
+    getMessagesByConversationId: (conversationId) =>
+      ipcRenderer.invoke('get-messages-by-conversation-id', conversationId),
+    getLastMessageByConversationId: ({ conversationId, count }) =>
+      ipcRenderer.invoke('get-last-messages-by-conversation-id', { conversationId, count }),
+    setLastMessageIsFinished: () => ipcRenderer.send('set-last-message-is-finished'),
+    getMessageById: (id) => ipcRenderer.invoke('get-message-by-id', id)
+  },
+  saveImage: (arrayBuffer) => ipcRenderer.invoke('save-image', arrayBuffer)
 }
 
 // 仅当启用上下文隔离时，使用 `contextBridge` API 将 Electron API 暴露给渲染器，

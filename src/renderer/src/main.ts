@@ -6,6 +6,7 @@ import router from './routers'
 import PrimeVue from 'primevue/config'
 import 'primeicons/primeicons.css'
 import ToastService from 'primevue/toastservice'
+import ConfirmationService from 'primevue/confirmationservice'
 
 import toggleDarkMode from './utils/toggleDarkMode'
 import toggleTheme from './utils/toggleTheme'
@@ -18,6 +19,7 @@ createApp(App)
     }
   })
   .use(ToastService)
+  .use(ConfirmationService)
   .mount('#app')
 
 if (!(await window.api.store.getItem('theme'))) {

@@ -128,6 +128,12 @@ declare global {
          * @returns Update Success
          */
         updateProvider: (provider: AiProvider) => Promise<string>
+        /**
+         * 更新AI供应商模型
+         * @param model 模型
+         * @returns Update Success
+         */
+        updateProviderModel: (model: string) => Promise<string>
       }
       /**
        * AI相关接口
@@ -150,6 +156,12 @@ declare global {
            */
           onStream: (listener: (event: IpcRendererEvent, data: string) => void) => void
           /**
+           * 接收推理消息
+           * @param listener 接收推理消息，回调参数类型为string，是流式输出的推理消息
+           * @returns void
+           */
+          onReasoningStream: (listener: (event: IpcRendererEvent, data: string) => void) => void
+          /**
            * 接收消息结束
            * @param listener 接收消息结束
            * @returns void
@@ -162,6 +174,11 @@ declare global {
            */
           onStreamError: (listener: (event: IpcRendererEvent, data: string) => void) => void
           /**
+           * 停止聊天流
+           * @returns void
+           */
+          stopChatStream: () => void
+          /**
            * 移除消息接收事件
            * @returns void
            */
@@ -172,10 +189,6 @@ declare global {
          * @returns Promise
          */
         getModelList: () => Promise<[]>
-      }
-      sqlite: {
-        insertTest: (data: string) => Promise<void>
-        selectTest: () => Promise<string[]>
       }
       store: {
         /**
@@ -208,6 +221,219 @@ declare global {
        * @returns void
        */
       openGithub: () => void
+      /**
+       * 对话相关接口
+       */
+      conversation: {
+        /**
+         * 添加对话
+         * @param roleId 角色ID
+         * @returns 新建对话成功
+         */
+        add: (roleId: number) => Promise<string | null>
+        /**
+         * 更新对话标题
+         * @param params 对话参数
+         * @returns 更新对话标题成功
+         */
+        updateTitle: (params: { id: number; title: string }) => Promise<number>
+        /**
+         * 获取对话列表
+         * @param roleId 角色ID
+         * @returns 对话列表
+         */
+        get: (roleId: number) => Promise<
+          Array<{
+            id: number
+            title: string
+            role_id: number
+            created_at: string
+            updated_at: string
+            role_name: string
+            role_description: string
+            role_definition: string
+          }>
+        >
+        /**
+         * 更新对话更新时间
+         * @param params 对话参数
+         * @returns 更新对话成功
+         */
+        updateUpdatedAtById: (params: {
+          id: number
+          updated_at: string
+        }) => Promise<string | number>
+        /**
+         * 删除对话
+         * @param id 对话ID
+         * @returns 删除
+         */
+        delete: (id: number) => Promise<number | string>
+      }
+      /**
+       * 消息相关接口
+       */
+      message: {
+        /**
+         * 添加消息
+         * @param params 消息参数
+         * @returns 消息ID
+         */
+        addMessage: (params: {
+          conversationId: number
+          content: string
+          reasoningContent?: string
+          type?: 'text' | 'image' | 'audio'
+          senderRole: number
+          isReasoning?: boolean
+        }) => Promise<number | null>
+        /**
+         * 更新消息
+         * @param params 消息参数
+         * @returns 更新消息成功
+         */
+        updateMessageById: (params: {
+          messageId: number
+          content: string
+        }) => Promise<string | number>
+        /**
+         * 更新推理消息
+         * @param params 消息参数
+         * @returns 更新推理消息成功
+         */
+        updateReasoningMessageById: (params: {
+          messageId: number
+          reasoningContent: string
+        }) => Promise<string | number>
+        /**
+         * 删除消息
+         * @param id 消息ID
+         * @returns 删除消息数量
+         */
+        deleteMessagesById: (id: number) => Promise<number>
+        /**
+         * 获取消息列表
+         * @param conversationId 对话ID
+         * @returns 消息列表
+         */
+        getMessagesByConversationId: (conversationId: number) => Promise<
+          Array<{
+            id: number
+            content: string
+            reasoningContent: string
+            type: 'text' | 'image' | 'audio'
+            senderRole: number
+            isReasoning: boolean
+            timestamp: string
+          }>
+        >
+        /**
+         * 获取最新消息
+         * @param params 对话ID和数量
+         * @returns 消息列表
+         */
+        getLastMessageByConversationId: (params: {
+          conversationId: number
+          count: number
+        }) => Promise<
+          Array<{
+            id: number
+            content: string
+            reasoningContent: string
+            type: 'text' | 'image' | 'audio'
+            senderRole: number
+            isFinished: boolean
+            isReasoning: boolean
+            timestamp: string
+          }>
+        >
+        /**
+         * 设置最新消息已完成
+         * @returns void
+         */
+        setLastMessageIsFinished: () => void
+        /**
+         * 获取消息
+         * @param id 消息ID
+         * @returns 消息
+         */
+        getMessageById: (id: number) => Promise<{
+          id: number
+          content: string
+          reasoningContent: string
+          type: 'text' | 'image' | 'audio'
+          senderRole: number
+          isReasoning: boolean
+          timestamp: string
+        }>
+      }
+      /**
+       * 角色相关接口
+       */
+      role: {
+        /**
+         * 添加角色
+         * @param params 角色参数
+         * @returns 角色ID
+         */
+        add: (params: {
+          name: string
+          description: string
+          definition: string
+        }) => Promise<string | number | null>
+        /**
+         * 删除角色
+         * @param id 角色ID
+         * @returns 删除成功
+         */
+        delete: (id: number) => Promise<string | number>
+        /**
+         * 获取角色列表
+         * @returns 角色列表
+         */
+        get: () => Promise<
+          Array<{
+            id: number
+            name: string
+            description: string
+            definition: string
+            created_at: string
+          }>
+        >
+        /**
+         * 更新角色
+         * @param params 角色参数
+         * @returns 更新角色成功
+         */
+        update: (params: {
+          id: number
+          name: string
+          description: string
+          definition: string
+        }) => Promise<string | number>
+        /**
+         * 更新角色更新时间
+         * @param params 角色参数
+         * @returns 更新角色成功
+         */
+        updateUpdatedAtById: (params: {
+          id: number
+          updated_at: string
+        }) => Promise<string | number>
+        /**
+         * 获取角色
+         * @param name 角色名称
+         * @returns 角色
+         */
+        getRoleByName: (name: string) => Promise<{
+          id: number
+          name: string
+          description: string
+          definition: string
+          created_at: string
+        }>
+      }
+      saveImage: (arrayBuffer: ArrayBuffer) => Promise<string>
     }
   }
 }

@@ -4,8 +4,7 @@ import store from '../utils/store'
 export default () => {
   if (!store.getItem('windowHandlers')) {
     store.setItem('windowHandlers', {
-      isMainWindowMaximized: false,
-      darkMode: 'system'
+      isMainWindowMaximized: false
     })
   }
 

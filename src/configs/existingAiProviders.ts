@@ -2,6 +2,7 @@ interface AiProvider {
   name: string
   key: string
   supportsOpenAI: boolean
+  icon: string
   requiredValues: {
     baseURL: string
     model: string
@@ -16,6 +17,7 @@ export const aiProviders: AiProvider[] = [
     name: 'OpenAI',
     key: 'openai',
     supportsOpenAI: true,
+    icon: 'openai.svg',
     requiredValues: {
       baseURL: 'https://api.openai.com/v1',
       apiKey: 'your-apiKey',
@@ -26,6 +28,7 @@ export const aiProviders: AiProvider[] = [
     name: '通义千问',
     key: 'qwen',
     supportsOpenAI: true,
+    icon: 'qwen.svg',
     requiredValues: {
       baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
       apiKey: 'your-apiKey',
@@ -36,6 +39,7 @@ export const aiProviders: AiProvider[] = [
   //   name: '文心一言',
   //   key: 'ernie',
   //   supportsOpenAI: false,
+  //   reasoner: [],
   //   requiredValues: {
   //     baseURL: 'baseURL',
   //     accessKey: 'your-accessKey',
@@ -47,6 +51,7 @@ export const aiProviders: AiProvider[] = [
     name: 'deepseek深度求索',
     key: 'deepseek',
     supportsOpenAI: true,
+    icon: 'deepseek.svg',
     requiredValues: {
       baseURL: 'https://api.deepseek.com/v1',
       apiKey: 'your-apiKey',

@@ -18,6 +18,14 @@ const router = createRouter({
           }
         },
         {
+          path: '/role',
+          name: 'role',
+          component: () => import('@renderer/views/Role.vue'),
+          meta: {
+            title: '角色'
+          }
+        },
+        {
           path: '/setting',
           name: 'setting',
           component: () => import('@renderer/views/Setting.vue'),
